@@ -1,0 +1,46 @@
+enum Permissions {
+  ADMIN
+  HEADOFHOUSE
+  USER
+  YOUTH
+}
+
+type User {
+  id: ID! @unique
+  name: String!
+  email: String! @unique
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: [Permissions]
+  createdChores: [Chore]! @relation(name: "ChoreCreators")
+  assigned: [Chore] @relation(name: "Assigned")
+  currentAssigned: [Chore] @relation(name: "CurrentAssigned")
+  households: [Household]! @relation(name: "HouseMembers")
+  householdsManaged: [Household]! @relation(name: "HeadsOfHouse")
+}
+
+type Household {
+  id: ID! @unique
+  name: String!
+  houseMembers: [User]! @relation(name: "HouseMembers")
+  headsOfHouse: [User]! @relation(name: "HeadsOfHouse")
+}
+
+type Chore {
+  id: ID! @unique
+  name: String!
+  createdBy: User! @relation(name: "ChoreCreators")
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  currentAssigned: [User] @relation(name: "CurrentAssigned")
+  assigned: [User] @relation(name: "Assigned")
+  peopleRequired: Float
+  rotationType: String
+  # pastCompletions: [User]
+  frequency: String
+}

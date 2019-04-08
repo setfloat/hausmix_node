@@ -1,0 +1,2451 @@
+# source: https://us1.prisma.sh/patrick-richardson-01c5e7/chore/dev
+# timestamp: Mon Apr 08 2019 13:45:34 GMT-0700 (Pacific Daylight Time)
+
+type AggregateChore {
+  count: Int!
+}
+
+type AggregateHousehold {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+type Chore implements Node {
+  id: ID!
+  name: String!
+  createdBy: User!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  currentAssigned(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  assigned(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+}
+
+"""A connection to a list of items."""
+type ChoreConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ChoreEdge]!
+  aggregate: AggregateChore!
+}
+
+input ChoreCreateInput {
+  id: ID
+  name: String!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  currentAssigned: UserCreateManyWithoutCurrentAssignedInput
+  assigned: UserCreateManyWithoutAssignedInput
+}
+
+input ChoreCreateManyWithoutAssignedInput {
+  create: [ChoreCreateWithoutAssignedInput!]
+  connect: [ChoreWhereUniqueInput!]
+}
+
+input ChoreCreateManyWithoutCreatedByInput {
+  create: [ChoreCreateWithoutCreatedByInput!]
+  connect: [ChoreWhereUniqueInput!]
+}
+
+input ChoreCreateManyWithoutCurrentAssignedInput {
+  create: [ChoreCreateWithoutCurrentAssignedInput!]
+  connect: [ChoreWhereUniqueInput!]
+}
+
+input ChoreCreateWithoutAssignedInput {
+  id: ID
+  name: String!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  currentAssigned: UserCreateManyWithoutCurrentAssignedInput
+}
+
+input ChoreCreateWithoutCreatedByInput {
+  id: ID
+  name: String!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  currentAssigned: UserCreateManyWithoutCurrentAssignedInput
+  assigned: UserCreateManyWithoutAssignedInput
+}
+
+input ChoreCreateWithoutCurrentAssignedInput {
+  id: ID
+  name: String!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  assigned: UserCreateManyWithoutAssignedInput
+}
+
+"""An edge in a connection."""
+type ChoreEdge {
+  """The item at the end of the edge."""
+  node: Chore!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ChoreOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  choreStatus_ASC
+  choreStatus_DESC
+  choreCost_ASC
+  choreCost_DESC
+  timeCost_ASC
+  timeCost_DESC
+  deadline_ASC
+  deadline_DESC
+  repeating_ASC
+  repeating_DESC
+  peopleRequired_ASC
+  peopleRequired_DESC
+  rotationType_ASC
+  rotationType_DESC
+  frequency_ASC
+  frequency_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ChorePreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  choreStatus: String!
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+}
+
+input ChoreScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  choreStatus: String
+
+  """All values that are not equal to given value."""
+  choreStatus_not: String
+
+  """All values that are contained in given list."""
+  choreStatus_in: [String!]
+
+  """All values that are not contained in given list."""
+  choreStatus_not_in: [String!]
+
+  """All values less than the given value."""
+  choreStatus_lt: String
+
+  """All values less than or equal the given value."""
+  choreStatus_lte: String
+
+  """All values greater than the given value."""
+  choreStatus_gt: String
+
+  """All values greater than or equal the given value."""
+  choreStatus_gte: String
+
+  """All values containing the given string."""
+  choreStatus_contains: String
+
+  """All values not containing the given string."""
+  choreStatus_not_contains: String
+
+  """All values starting with the given string."""
+  choreStatus_starts_with: String
+
+  """All values not starting with the given string."""
+  choreStatus_not_starts_with: String
+
+  """All values ending with the given string."""
+  choreStatus_ends_with: String
+
+  """All values not ending with the given string."""
+  choreStatus_not_ends_with: String
+  choreCost: Float
+
+  """All values that are not equal to given value."""
+  choreCost_not: Float
+
+  """All values that are contained in given list."""
+  choreCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  choreCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  choreCost_lt: Float
+
+  """All values less than or equal the given value."""
+  choreCost_lte: Float
+
+  """All values greater than the given value."""
+  choreCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  choreCost_gte: Float
+  timeCost: Float
+
+  """All values that are not equal to given value."""
+  timeCost_not: Float
+
+  """All values that are contained in given list."""
+  timeCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  timeCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  timeCost_lt: Float
+
+  """All values less than or equal the given value."""
+  timeCost_lte: Float
+
+  """All values greater than the given value."""
+  timeCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  timeCost_gte: Float
+  deadline: DateTime
+
+  """All values that are not equal to given value."""
+  deadline_not: DateTime
+
+  """All values that are contained in given list."""
+  deadline_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  deadline_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  deadline_lt: DateTime
+
+  """All values less than or equal the given value."""
+  deadline_lte: DateTime
+
+  """All values greater than the given value."""
+  deadline_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  deadline_gte: DateTime
+  repeating: Boolean
+
+  """All values that are not equal to given value."""
+  repeating_not: Boolean
+  peopleRequired: Float
+
+  """All values that are not equal to given value."""
+  peopleRequired_not: Float
+
+  """All values that are contained in given list."""
+  peopleRequired_in: [Float!]
+
+  """All values that are not contained in given list."""
+  peopleRequired_not_in: [Float!]
+
+  """All values less than the given value."""
+  peopleRequired_lt: Float
+
+  """All values less than or equal the given value."""
+  peopleRequired_lte: Float
+
+  """All values greater than the given value."""
+  peopleRequired_gt: Float
+
+  """All values greater than or equal the given value."""
+  peopleRequired_gte: Float
+  rotationType: String
+
+  """All values that are not equal to given value."""
+  rotationType_not: String
+
+  """All values that are contained in given list."""
+  rotationType_in: [String!]
+
+  """All values that are not contained in given list."""
+  rotationType_not_in: [String!]
+
+  """All values less than the given value."""
+  rotationType_lt: String
+
+  """All values less than or equal the given value."""
+  rotationType_lte: String
+
+  """All values greater than the given value."""
+  rotationType_gt: String
+
+  """All values greater than or equal the given value."""
+  rotationType_gte: String
+
+  """All values containing the given string."""
+  rotationType_contains: String
+
+  """All values not containing the given string."""
+  rotationType_not_contains: String
+
+  """All values starting with the given string."""
+  rotationType_starts_with: String
+
+  """All values not starting with the given string."""
+  rotationType_not_starts_with: String
+
+  """All values ending with the given string."""
+  rotationType_ends_with: String
+
+  """All values not ending with the given string."""
+  rotationType_not_ends_with: String
+  frequency: String
+
+  """All values that are not equal to given value."""
+  frequency_not: String
+
+  """All values that are contained in given list."""
+  frequency_in: [String!]
+
+  """All values that are not contained in given list."""
+  frequency_not_in: [String!]
+
+  """All values less than the given value."""
+  frequency_lt: String
+
+  """All values less than or equal the given value."""
+  frequency_lte: String
+
+  """All values greater than the given value."""
+  frequency_gt: String
+
+  """All values greater than or equal the given value."""
+  frequency_gte: String
+
+  """All values containing the given string."""
+  frequency_contains: String
+
+  """All values not containing the given string."""
+  frequency_not_contains: String
+
+  """All values starting with the given string."""
+  frequency_starts_with: String
+
+  """All values not starting with the given string."""
+  frequency_not_starts_with: String
+
+  """All values ending with the given string."""
+  frequency_ends_with: String
+
+  """All values not ending with the given string."""
+  frequency_not_ends_with: String
+}
+
+type ChoreSubscriptionPayload {
+  mutation: MutationType!
+  node: Chore
+  updatedFields: [String!]
+  previousValues: ChorePreviousValues
+}
+
+input ChoreSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ChoreWhereInput
+}
+
+input ChoreUpdateInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
+  assigned: UserUpdateManyWithoutAssignedInput
+}
+
+input ChoreUpdateManyDataInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+}
+
+input ChoreUpdateManyMutationInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+}
+
+input ChoreUpdateManyWithoutAssignedInput {
+  create: [ChoreCreateWithoutAssignedInput!]
+  connect: [ChoreWhereUniqueInput!]
+  set: [ChoreWhereUniqueInput!]
+  disconnect: [ChoreWhereUniqueInput!]
+  delete: [ChoreWhereUniqueInput!]
+  update: [ChoreUpdateWithWhereUniqueWithoutAssignedInput!]
+  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreScalarWhereInput!]
+  upsert: [ChoreUpsertWithWhereUniqueWithoutAssignedInput!]
+}
+
+input ChoreUpdateManyWithoutCreatedByInput {
+  create: [ChoreCreateWithoutCreatedByInput!]
+  connect: [ChoreWhereUniqueInput!]
+  set: [ChoreWhereUniqueInput!]
+  disconnect: [ChoreWhereUniqueInput!]
+  delete: [ChoreWhereUniqueInput!]
+  update: [ChoreUpdateWithWhereUniqueWithoutCreatedByInput!]
+  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreScalarWhereInput!]
+  upsert: [ChoreUpsertWithWhereUniqueWithoutCreatedByInput!]
+}
+
+input ChoreUpdateManyWithoutCurrentAssignedInput {
+  create: [ChoreCreateWithoutCurrentAssignedInput!]
+  connect: [ChoreWhereUniqueInput!]
+  set: [ChoreWhereUniqueInput!]
+  disconnect: [ChoreWhereUniqueInput!]
+  delete: [ChoreWhereUniqueInput!]
+  update: [ChoreUpdateWithWhereUniqueWithoutCurrentAssignedInput!]
+  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreScalarWhereInput!]
+  upsert: [ChoreUpsertWithWhereUniqueWithoutCurrentAssignedInput!]
+}
+
+input ChoreUpdateManyWithWhereNestedInput {
+  where: ChoreScalarWhereInput!
+  data: ChoreUpdateManyDataInput!
+}
+
+input ChoreUpdateWithoutAssignedDataInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
+}
+
+input ChoreUpdateWithoutCreatedByDataInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
+  assigned: UserUpdateManyWithoutAssignedInput
+}
+
+input ChoreUpdateWithoutCurrentAssignedDataInput {
+  name: String
+  description: String
+  choreStatus: String
+  choreCost: Float
+  timeCost: Float
+  deadline: DateTime
+  repeating: Boolean
+  peopleRequired: Float
+  rotationType: String
+  frequency: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  assigned: UserUpdateManyWithoutAssignedInput
+}
+
+input ChoreUpdateWithWhereUniqueWithoutAssignedInput {
+  where: ChoreWhereUniqueInput!
+  data: ChoreUpdateWithoutAssignedDataInput!
+}
+
+input ChoreUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: ChoreWhereUniqueInput!
+  data: ChoreUpdateWithoutCreatedByDataInput!
+}
+
+input ChoreUpdateWithWhereUniqueWithoutCurrentAssignedInput {
+  where: ChoreWhereUniqueInput!
+  data: ChoreUpdateWithoutCurrentAssignedDataInput!
+}
+
+input ChoreUpsertWithWhereUniqueWithoutAssignedInput {
+  where: ChoreWhereUniqueInput!
+  update: ChoreUpdateWithoutAssignedDataInput!
+  create: ChoreCreateWithoutAssignedInput!
+}
+
+input ChoreUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: ChoreWhereUniqueInput!
+  update: ChoreUpdateWithoutCreatedByDataInput!
+  create: ChoreCreateWithoutCreatedByInput!
+}
+
+input ChoreUpsertWithWhereUniqueWithoutCurrentAssignedInput {
+  where: ChoreWhereUniqueInput!
+  update: ChoreUpdateWithoutCurrentAssignedDataInput!
+  create: ChoreCreateWithoutCurrentAssignedInput!
+}
+
+input ChoreWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  choreStatus: String
+
+  """All values that are not equal to given value."""
+  choreStatus_not: String
+
+  """All values that are contained in given list."""
+  choreStatus_in: [String!]
+
+  """All values that are not contained in given list."""
+  choreStatus_not_in: [String!]
+
+  """All values less than the given value."""
+  choreStatus_lt: String
+
+  """All values less than or equal the given value."""
+  choreStatus_lte: String
+
+  """All values greater than the given value."""
+  choreStatus_gt: String
+
+  """All values greater than or equal the given value."""
+  choreStatus_gte: String
+
+  """All values containing the given string."""
+  choreStatus_contains: String
+
+  """All values not containing the given string."""
+  choreStatus_not_contains: String
+
+  """All values starting with the given string."""
+  choreStatus_starts_with: String
+
+  """All values not starting with the given string."""
+  choreStatus_not_starts_with: String
+
+  """All values ending with the given string."""
+  choreStatus_ends_with: String
+
+  """All values not ending with the given string."""
+  choreStatus_not_ends_with: String
+  choreCost: Float
+
+  """All values that are not equal to given value."""
+  choreCost_not: Float
+
+  """All values that are contained in given list."""
+  choreCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  choreCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  choreCost_lt: Float
+
+  """All values less than or equal the given value."""
+  choreCost_lte: Float
+
+  """All values greater than the given value."""
+  choreCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  choreCost_gte: Float
+  timeCost: Float
+
+  """All values that are not equal to given value."""
+  timeCost_not: Float
+
+  """All values that are contained in given list."""
+  timeCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  timeCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  timeCost_lt: Float
+
+  """All values less than or equal the given value."""
+  timeCost_lte: Float
+
+  """All values greater than the given value."""
+  timeCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  timeCost_gte: Float
+  deadline: DateTime
+
+  """All values that are not equal to given value."""
+  deadline_not: DateTime
+
+  """All values that are contained in given list."""
+  deadline_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  deadline_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  deadline_lt: DateTime
+
+  """All values less than or equal the given value."""
+  deadline_lte: DateTime
+
+  """All values greater than the given value."""
+  deadline_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  deadline_gte: DateTime
+  repeating: Boolean
+
+  """All values that are not equal to given value."""
+  repeating_not: Boolean
+  peopleRequired: Float
+
+  """All values that are not equal to given value."""
+  peopleRequired_not: Float
+
+  """All values that are contained in given list."""
+  peopleRequired_in: [Float!]
+
+  """All values that are not contained in given list."""
+  peopleRequired_not_in: [Float!]
+
+  """All values less than the given value."""
+  peopleRequired_lt: Float
+
+  """All values less than or equal the given value."""
+  peopleRequired_lte: Float
+
+  """All values greater than the given value."""
+  peopleRequired_gt: Float
+
+  """All values greater than or equal the given value."""
+  peopleRequired_gte: Float
+  rotationType: String
+
+  """All values that are not equal to given value."""
+  rotationType_not: String
+
+  """All values that are contained in given list."""
+  rotationType_in: [String!]
+
+  """All values that are not contained in given list."""
+  rotationType_not_in: [String!]
+
+  """All values less than the given value."""
+  rotationType_lt: String
+
+  """All values less than or equal the given value."""
+  rotationType_lte: String
+
+  """All values greater than the given value."""
+  rotationType_gt: String
+
+  """All values greater than or equal the given value."""
+  rotationType_gte: String
+
+  """All values containing the given string."""
+  rotationType_contains: String
+
+  """All values not containing the given string."""
+  rotationType_not_contains: String
+
+  """All values starting with the given string."""
+  rotationType_starts_with: String
+
+  """All values not starting with the given string."""
+  rotationType_not_starts_with: String
+
+  """All values ending with the given string."""
+  rotationType_ends_with: String
+
+  """All values not ending with the given string."""
+  rotationType_not_ends_with: String
+  frequency: String
+
+  """All values that are not equal to given value."""
+  frequency_not: String
+
+  """All values that are contained in given list."""
+  frequency_in: [String!]
+
+  """All values that are not contained in given list."""
+  frequency_not_in: [String!]
+
+  """All values less than the given value."""
+  frequency_lt: String
+
+  """All values less than or equal the given value."""
+  frequency_lte: String
+
+  """All values greater than the given value."""
+  frequency_gt: String
+
+  """All values greater than or equal the given value."""
+  frequency_gte: String
+
+  """All values containing the given string."""
+  frequency_contains: String
+
+  """All values not containing the given string."""
+  frequency_not_contains: String
+
+  """All values starting with the given string."""
+  frequency_starts_with: String
+
+  """All values not starting with the given string."""
+  frequency_not_starts_with: String
+
+  """All values ending with the given string."""
+  frequency_ends_with: String
+
+  """All values not ending with the given string."""
+  frequency_not_ends_with: String
+  createdBy: UserWhereInput
+  currentAssigned_every: UserWhereInput
+  currentAssigned_some: UserWhereInput
+  currentAssigned_none: UserWhereInput
+  assigned_every: UserWhereInput
+  assigned_some: UserWhereInput
+  assigned_none: UserWhereInput
+}
+
+input ChoreWhereUniqueInput {
+  id: ID
+}
+
+scalar DateTime
+
+type Household implements Node {
+  id: ID!
+  name: String!
+  houseMembers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  headsOfHouse(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+}
+
+"""A connection to a list of items."""
+type HouseholdConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [HouseholdEdge]!
+  aggregate: AggregateHousehold!
+}
+
+input HouseholdCreateInput {
+  id: ID
+  name: String!
+  houseMembers: UserCreateManyWithoutHouseholdsInput
+  headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+}
+
+input HouseholdCreateManyWithoutHeadsOfHouseInput {
+  create: [HouseholdCreateWithoutHeadsOfHouseInput!]
+  connect: [HouseholdWhereUniqueInput!]
+}
+
+input HouseholdCreateManyWithoutHouseMembersInput {
+  create: [HouseholdCreateWithoutHouseMembersInput!]
+  connect: [HouseholdWhereUniqueInput!]
+}
+
+input HouseholdCreateWithoutHeadsOfHouseInput {
+  id: ID
+  name: String!
+  houseMembers: UserCreateManyWithoutHouseholdsInput
+}
+
+input HouseholdCreateWithoutHouseMembersInput {
+  id: ID
+  name: String!
+  headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+}
+
+"""An edge in a connection."""
+type HouseholdEdge {
+  """The item at the end of the edge."""
+  node: Household!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum HouseholdOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type HouseholdPreviousValues {
+  id: ID!
+  name: String!
+}
+
+input HouseholdScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [HouseholdScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [HouseholdScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [HouseholdScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type HouseholdSubscriptionPayload {
+  mutation: MutationType!
+  node: Household
+  updatedFields: [String!]
+  previousValues: HouseholdPreviousValues
+}
+
+input HouseholdSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [HouseholdSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [HouseholdSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [HouseholdSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: HouseholdWhereInput
+}
+
+input HouseholdUpdateInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+}
+
+input HouseholdUpdateManyDataInput {
+  name: String
+}
+
+input HouseholdUpdateManyMutationInput {
+  name: String
+}
+
+input HouseholdUpdateManyWithoutHeadsOfHouseInput {
+  create: [HouseholdCreateWithoutHeadsOfHouseInput!]
+  connect: [HouseholdWhereUniqueInput!]
+  set: [HouseholdWhereUniqueInput!]
+  disconnect: [HouseholdWhereUniqueInput!]
+  delete: [HouseholdWhereUniqueInput!]
+  update: [HouseholdUpdateWithWhereUniqueWithoutHeadsOfHouseInput!]
+  updateMany: [HouseholdUpdateManyWithWhereNestedInput!]
+  deleteMany: [HouseholdScalarWhereInput!]
+  upsert: [HouseholdUpsertWithWhereUniqueWithoutHeadsOfHouseInput!]
+}
+
+input HouseholdUpdateManyWithoutHouseMembersInput {
+  create: [HouseholdCreateWithoutHouseMembersInput!]
+  connect: [HouseholdWhereUniqueInput!]
+  set: [HouseholdWhereUniqueInput!]
+  disconnect: [HouseholdWhereUniqueInput!]
+  delete: [HouseholdWhereUniqueInput!]
+  update: [HouseholdUpdateWithWhereUniqueWithoutHouseMembersInput!]
+  updateMany: [HouseholdUpdateManyWithWhereNestedInput!]
+  deleteMany: [HouseholdScalarWhereInput!]
+  upsert: [HouseholdUpsertWithWhereUniqueWithoutHouseMembersInput!]
+}
+
+input HouseholdUpdateManyWithWhereNestedInput {
+  where: HouseholdScalarWhereInput!
+  data: HouseholdUpdateManyDataInput!
+}
+
+input HouseholdUpdateWithoutHeadsOfHouseDataInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+}
+
+input HouseholdUpdateWithoutHouseMembersDataInput {
+  name: String
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+}
+
+input HouseholdUpdateWithWhereUniqueWithoutHeadsOfHouseInput {
+  where: HouseholdWhereUniqueInput!
+  data: HouseholdUpdateWithoutHeadsOfHouseDataInput!
+}
+
+input HouseholdUpdateWithWhereUniqueWithoutHouseMembersInput {
+  where: HouseholdWhereUniqueInput!
+  data: HouseholdUpdateWithoutHouseMembersDataInput!
+}
+
+input HouseholdUpsertWithWhereUniqueWithoutHeadsOfHouseInput {
+  where: HouseholdWhereUniqueInput!
+  update: HouseholdUpdateWithoutHeadsOfHouseDataInput!
+  create: HouseholdCreateWithoutHeadsOfHouseInput!
+}
+
+input HouseholdUpsertWithWhereUniqueWithoutHouseMembersInput {
+  where: HouseholdWhereUniqueInput!
+  update: HouseholdUpdateWithoutHouseMembersDataInput!
+  create: HouseholdCreateWithoutHouseMembersInput!
+}
+
+input HouseholdWhereInput {
+  """Logical AND on all given filters."""
+  AND: [HouseholdWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [HouseholdWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [HouseholdWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  houseMembers_every: UserWhereInput
+  houseMembers_some: UserWhereInput
+  houseMembers_none: UserWhereInput
+  headsOfHouse_every: UserWhereInput
+  headsOfHouse_some: UserWhereInput
+  headsOfHouse_none: UserWhereInput
+}
+
+input HouseholdWhereUniqueInput {
+  id: ID
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  createHousehold(data: HouseholdCreateInput!): Household!
+  createChore(data: ChoreCreateInput!): Chore!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateHousehold(data: HouseholdUpdateInput!, where: HouseholdWhereUniqueInput!): Household
+  updateChore(data: ChoreUpdateInput!, where: ChoreWhereUniqueInput!): Chore
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteHousehold(where: HouseholdWhereUniqueInput!): Household
+  deleteChore(where: ChoreWhereUniqueInput!): Chore
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertHousehold(where: HouseholdWhereUniqueInput!, create: HouseholdCreateInput!, update: HouseholdUpdateInput!): Household!
+  upsertChore(where: ChoreWhereUniqueInput!, create: ChoreCreateInput!, update: ChoreUpdateInput!): Chore!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyHouseholds(data: HouseholdUpdateManyMutationInput!, where: HouseholdWhereInput): BatchPayload!
+  updateManyChores(data: ChoreUpdateManyMutationInput!, where: ChoreWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyHouseholds(where: HouseholdWhereInput): BatchPayload!
+  deleteManyChores(where: ChoreWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+enum Permissions {
+  ADMIN
+  HEADOFHOUSE
+  USER
+  YOUTH
+}
+
+type Query {
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  households(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household]!
+  chores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore]!
+  user(where: UserWhereUniqueInput!): User
+  household(where: HouseholdWhereUniqueInput!): Household
+  chore(where: ChoreWhereUniqueInput!): Chore
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  householdsConnection(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HouseholdConnection!
+  choresConnection(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Subscription {
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  household(where: HouseholdSubscriptionWhereInput): HouseholdSubscriptionPayload
+  chore(where: ChoreSubscriptionWhereInput): ChoreSubscriptionPayload
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: [Permissions!]!
+  createdChores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
+  assigned(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
+  currentAssigned(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
+  households(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household!]
+  householdsManaged(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household!]
+}
+
+"""A connection to a list of items."""
+type UserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreCreateManyWithoutCreatedByInput
+  assigned: ChoreCreateManyWithoutAssignedInput
+  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+}
+
+input UserCreateManyWithoutAssignedInput {
+  create: [UserCreateWithoutAssignedInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutCurrentAssignedInput {
+  create: [UserCreateWithoutCurrentAssignedInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutHouseholdsInput {
+  create: [UserCreateWithoutHouseholdsInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateManyWithoutHouseholdsManagedInput {
+  create: [UserCreateWithoutHouseholdsManagedInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneWithoutCreatedChoresInput {
+  create: UserCreateWithoutCreatedChoresInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreatepermissionsInput {
+  set: [Permissions!]
+}
+
+input UserCreateWithoutAssignedInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+}
+
+input UserCreateWithoutCreatedChoresInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  assigned: ChoreCreateManyWithoutAssignedInput
+  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+}
+
+input UserCreateWithoutCurrentAssignedInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreCreateManyWithoutCreatedByInput
+  assigned: ChoreCreateManyWithoutAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+}
+
+input UserCreateWithoutHouseholdsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreCreateManyWithoutCreatedByInput
+  assigned: ChoreCreateManyWithoutAssignedInput
+  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+}
+
+input UserCreateWithoutHouseholdsManagedInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreCreateManyWithoutCreatedByInput
+  assigned: ChoreCreateManyWithoutAssignedInput
+  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  resetToken_ASC
+  resetToken_DESC
+  resetTokenExpiry_ASC
+  resetTokenExpiry_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: [Permissions!]!
+}
+
+input UserScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  resetToken: String
+
+  """All values that are not equal to given value."""
+  resetToken_not: String
+
+  """All values that are contained in given list."""
+  resetToken_in: [String!]
+
+  """All values that are not contained in given list."""
+  resetToken_not_in: [String!]
+
+  """All values less than the given value."""
+  resetToken_lt: String
+
+  """All values less than or equal the given value."""
+  resetToken_lte: String
+
+  """All values greater than the given value."""
+  resetToken_gt: String
+
+  """All values greater than or equal the given value."""
+  resetToken_gte: String
+
+  """All values containing the given string."""
+  resetToken_contains: String
+
+  """All values not containing the given string."""
+  resetToken_not_contains: String
+
+  """All values starting with the given string."""
+  resetToken_starts_with: String
+
+  """All values not starting with the given string."""
+  resetToken_not_starts_with: String
+
+  """All values ending with the given string."""
+  resetToken_ends_with: String
+
+  """All values not ending with the given string."""
+  resetToken_not_ends_with: String
+  resetTokenExpiry: Float
+
+  """All values that are not equal to given value."""
+  resetTokenExpiry_not: Float
+
+  """All values that are contained in given list."""
+  resetTokenExpiry_in: [Float!]
+
+  """All values that are not contained in given list."""
+  resetTokenExpiry_not_in: [Float!]
+
+  """All values less than the given value."""
+  resetTokenExpiry_lt: Float
+
+  """All values less than or equal the given value."""
+  resetTokenExpiry_lte: Float
+
+  """All values greater than the given value."""
+  resetTokenExpiry_gt: Float
+
+  """All values greater than or equal the given value."""
+  resetTokenExpiry_gte: Float
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+}
+
+input UserUpdateManyMutationInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+}
+
+input UserUpdateManyWithoutAssignedInput {
+  create: [UserCreateWithoutAssignedInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutAssignedInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutAssignedInput!]
+}
+
+input UserUpdateManyWithoutCurrentAssignedInput {
+  create: [UserCreateWithoutCurrentAssignedInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutCurrentAssignedInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutCurrentAssignedInput!]
+}
+
+input UserUpdateManyWithoutHouseholdsInput {
+  create: [UserCreateWithoutHouseholdsInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutHouseholdsInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutHouseholdsInput!]
+}
+
+input UserUpdateManyWithoutHouseholdsManagedInput {
+  create: [UserCreateWithoutHouseholdsManagedInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutHouseholdsManagedInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutHouseholdsManagedInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
+}
+
+input UserUpdateOneRequiredWithoutCreatedChoresInput {
+  create: UserCreateWithoutCreatedChoresInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutCreatedChoresDataInput
+  upsert: UserUpsertWithoutCreatedChoresInput
+}
+
+input UserUpdatepermissionsInput {
+  set: [Permissions!]
+}
+
+input UserUpdateWithoutAssignedDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
+input UserUpdateWithoutCreatedChoresDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
+input UserUpdateWithoutCurrentAssignedDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
+input UserUpdateWithoutHouseholdsDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
+input UserUpdateWithoutHouseholdsManagedDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+}
+
+input UserUpdateWithWhereUniqueWithoutAssignedInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutAssignedDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutCurrentAssignedInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutCurrentAssignedDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutHouseholdsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutHouseholdsDataInput!
+}
+
+input UserUpdateWithWhereUniqueWithoutHouseholdsManagedInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutHouseholdsManagedDataInput!
+}
+
+input UserUpsertWithoutCreatedChoresInput {
+  update: UserUpdateWithoutCreatedChoresDataInput!
+  create: UserCreateWithoutCreatedChoresInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutAssignedInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutAssignedDataInput!
+  create: UserCreateWithoutAssignedInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutCurrentAssignedInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutCurrentAssignedDataInput!
+  create: UserCreateWithoutCurrentAssignedInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutHouseholdsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutHouseholdsDataInput!
+  create: UserCreateWithoutHouseholdsInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutHouseholdsManagedInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutHouseholdsManagedDataInput!
+  create: UserCreateWithoutHouseholdsManagedInput!
+}
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  resetToken: String
+
+  """All values that are not equal to given value."""
+  resetToken_not: String
+
+  """All values that are contained in given list."""
+  resetToken_in: [String!]
+
+  """All values that are not contained in given list."""
+  resetToken_not_in: [String!]
+
+  """All values less than the given value."""
+  resetToken_lt: String
+
+  """All values less than or equal the given value."""
+  resetToken_lte: String
+
+  """All values greater than the given value."""
+  resetToken_gt: String
+
+  """All values greater than or equal the given value."""
+  resetToken_gte: String
+
+  """All values containing the given string."""
+  resetToken_contains: String
+
+  """All values not containing the given string."""
+  resetToken_not_contains: String
+
+  """All values starting with the given string."""
+  resetToken_starts_with: String
+
+  """All values not starting with the given string."""
+  resetToken_not_starts_with: String
+
+  """All values ending with the given string."""
+  resetToken_ends_with: String
+
+  """All values not ending with the given string."""
+  resetToken_not_ends_with: String
+  resetTokenExpiry: Float
+
+  """All values that are not equal to given value."""
+  resetTokenExpiry_not: Float
+
+  """All values that are contained in given list."""
+  resetTokenExpiry_in: [Float!]
+
+  """All values that are not contained in given list."""
+  resetTokenExpiry_not_in: [Float!]
+
+  """All values less than the given value."""
+  resetTokenExpiry_lt: Float
+
+  """All values less than or equal the given value."""
+  resetTokenExpiry_lte: Float
+
+  """All values greater than the given value."""
+  resetTokenExpiry_gt: Float
+
+  """All values greater than or equal the given value."""
+  resetTokenExpiry_gte: Float
+  createdChores_every: ChoreWhereInput
+  createdChores_some: ChoreWhereInput
+  createdChores_none: ChoreWhereInput
+  assigned_every: ChoreWhereInput
+  assigned_some: ChoreWhereInput
+  assigned_none: ChoreWhereInput
+  currentAssigned_every: ChoreWhereInput
+  currentAssigned_some: ChoreWhereInput
+  currentAssigned_none: ChoreWhereInput
+  households_every: HouseholdWhereInput
+  households_some: HouseholdWhereInput
+  households_none: HouseholdWhereInput
+  householdsManaged_every: HouseholdWhereInput
+  householdsManaged_some: HouseholdWhereInput
+  householdsManaged_none: HouseholdWhereInput
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  email: String
+}

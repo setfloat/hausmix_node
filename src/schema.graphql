@@ -1,5 +1,9 @@
 # import * from './generated/prisma.graphql'
 
+type SuccessMessage {
+  message: String
+}
+
 type User {
   id: ID!
   name: String!
@@ -14,7 +18,8 @@ type Query {
 }
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): User!
+  signUp(email: String!, password: String!, name: String!): User!
+  signIn(email: String!, password: String!): User!
   createChore(
     name: String!
     description: String
@@ -26,4 +31,5 @@ type Mutation {
     rotationType: String
     frequency: String
   ): Chore!
+  signOut: SuccessMessage
 }

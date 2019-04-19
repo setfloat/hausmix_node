@@ -4,22 +4,33 @@ type SuccessMessage {
   message: String
 }
 
+type HeadsOfHouse {
+  id: String
+}
+
 type User {
   id: ID!
   name: String!
   email: String!
   password: String!
   permissions: [Permissions!]!
+  households: [Household]
+  householdsManaged: [Household]
 }
 
 type Query {
+  # user: User!
+  invite(inviteToken: String!): Invite
   users: [User]!
   loggedInUser: User
+  currentHousehold(id: String!): Household!
+  households: [Household]
 }
 
 type Mutation {
-  signUp(email: String!, password: String!, name: String!): User!
   signIn(email: String!, password: String!): User!
+  signOut: SuccessMessage
+  signUp(email: String!, password: String!, name: String!): User!
   createChore(
     name: String!
     description: String
@@ -31,5 +42,12 @@ type Mutation {
     rotationType: String
     frequency: String
   ): Chore!
-  signOut: SuccessMessage
+  createHousehold(name: String!): Household!
+  createInvite(householdId: String!, invitedEmail: String!): Invite
+  acceptInvite(
+    inviteToken: String!
+    email: String!
+    password: String!
+    name: String!
+  ): User!
 }

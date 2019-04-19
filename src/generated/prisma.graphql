@@ -1,11 +1,15 @@
 # source: https://us1.prisma.sh/patrick-richardson-01c5e7/chore/dev
-# timestamp: Mon Apr 08 2019 13:45:34 GMT-0700 (Pacific Daylight Time)
+# timestamp: Sun Apr 14 2019 14:26:30 GMT-0700 (Pacific Daylight Time)
 
 type AggregateChore {
   count: Int!
 }
 
 type AggregateHousehold {
+  count: Int!
+}
+
+type AggregateInvite {
   count: Int!
 }
 
@@ -1110,6 +1114,11 @@ input HouseholdCreateManyWithoutHouseMembersInput {
   connect: [HouseholdWhereUniqueInput!]
 }
 
+input HouseholdCreateOneInput {
+  create: HouseholdCreateInput
+  connect: HouseholdWhereUniqueInput
+}
+
 input HouseholdCreateWithoutHeadsOfHouseInput {
   id: ID
   name: String!
@@ -1277,6 +1286,12 @@ input HouseholdSubscriptionWhereInput {
   node: HouseholdWhereInput
 }
 
+input HouseholdUpdateDataInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+}
+
 input HouseholdUpdateInput {
   name: String
   houseMembers: UserUpdateManyWithoutHouseholdsInput
@@ -1320,6 +1335,13 @@ input HouseholdUpdateManyWithWhereNestedInput {
   data: HouseholdUpdateManyDataInput!
 }
 
+input HouseholdUpdateOneRequiredInput {
+  create: HouseholdCreateInput
+  connect: HouseholdWhereUniqueInput
+  update: HouseholdUpdateDataInput
+  upsert: HouseholdUpsertNestedInput
+}
+
 input HouseholdUpdateWithoutHeadsOfHouseDataInput {
   name: String
   houseMembers: UserUpdateManyWithoutHouseholdsInput
@@ -1338,6 +1360,11 @@ input HouseholdUpdateWithWhereUniqueWithoutHeadsOfHouseInput {
 input HouseholdUpdateWithWhereUniqueWithoutHouseMembersInput {
   where: HouseholdWhereUniqueInput!
   data: HouseholdUpdateWithoutHouseMembersDataInput!
+}
+
+input HouseholdUpsertNestedInput {
+  update: HouseholdUpdateDataInput!
+  create: HouseholdCreateInput!
 }
 
 input HouseholdUpsertWithWhereUniqueWithoutHeadsOfHouseInput {
@@ -1453,6 +1480,312 @@ input HouseholdWhereUniqueInput {
   id: ID
 }
 
+type Invite implements Node {
+  id: ID!
+  household: Household!
+  invitedBy: User!
+  invitedEmail: String!
+  invitedIsUser: Boolean!
+  inviteStatus: InviteStatus!
+  inviteToken: String
+  inviteTokenExpiry: Float
+}
+
+"""A connection to a list of items."""
+type InviteConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [InviteEdge]!
+  aggregate: AggregateInvite!
+}
+
+input InviteCreateInput {
+  id: ID
+  invitedEmail: String!
+  invitedIsUser: Boolean!
+  inviteStatus: InviteStatus!
+  inviteToken: String
+  inviteTokenExpiry: Float
+  household: HouseholdCreateOneInput!
+  invitedBy: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type InviteEdge {
+  """The item at the end of the edge."""
+  node: Invite!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum InviteOrderByInput {
+  id_ASC
+  id_DESC
+  invitedEmail_ASC
+  invitedEmail_DESC
+  invitedIsUser_ASC
+  invitedIsUser_DESC
+  inviteStatus_ASC
+  inviteStatus_DESC
+  inviteToken_ASC
+  inviteToken_DESC
+  inviteTokenExpiry_ASC
+  inviteTokenExpiry_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type InvitePreviousValues {
+  id: ID!
+  invitedEmail: String!
+  invitedIsUser: Boolean!
+  inviteStatus: InviteStatus!
+  inviteToken: String
+  inviteTokenExpiry: Float
+}
+
+enum InviteStatus {
+  PENDING
+  DENIED
+  ACCEPTED
+}
+
+type InviteSubscriptionPayload {
+  mutation: MutationType!
+  node: Invite
+  updatedFields: [String!]
+  previousValues: InvitePreviousValues
+}
+
+input InviteSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InviteSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InviteSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InviteSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InviteWhereInput
+}
+
+input InviteUpdateInput {
+  invitedEmail: String
+  invitedIsUser: Boolean
+  inviteStatus: InviteStatus
+  inviteToken: String
+  inviteTokenExpiry: Float
+  household: HouseholdUpdateOneRequiredInput
+  invitedBy: UserUpdateOneRequiredInput
+}
+
+input InviteUpdateManyMutationInput {
+  invitedEmail: String
+  invitedIsUser: Boolean
+  inviteStatus: InviteStatus
+  inviteToken: String
+  inviteTokenExpiry: Float
+}
+
+input InviteWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InviteWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InviteWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InviteWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  invitedEmail: String
+
+  """All values that are not equal to given value."""
+  invitedEmail_not: String
+
+  """All values that are contained in given list."""
+  invitedEmail_in: [String!]
+
+  """All values that are not contained in given list."""
+  invitedEmail_not_in: [String!]
+
+  """All values less than the given value."""
+  invitedEmail_lt: String
+
+  """All values less than or equal the given value."""
+  invitedEmail_lte: String
+
+  """All values greater than the given value."""
+  invitedEmail_gt: String
+
+  """All values greater than or equal the given value."""
+  invitedEmail_gte: String
+
+  """All values containing the given string."""
+  invitedEmail_contains: String
+
+  """All values not containing the given string."""
+  invitedEmail_not_contains: String
+
+  """All values starting with the given string."""
+  invitedEmail_starts_with: String
+
+  """All values not starting with the given string."""
+  invitedEmail_not_starts_with: String
+
+  """All values ending with the given string."""
+  invitedEmail_ends_with: String
+
+  """All values not ending with the given string."""
+  invitedEmail_not_ends_with: String
+  invitedIsUser: Boolean
+
+  """All values that are not equal to given value."""
+  invitedIsUser_not: Boolean
+  inviteStatus: InviteStatus
+
+  """All values that are not equal to given value."""
+  inviteStatus_not: InviteStatus
+
+  """All values that are contained in given list."""
+  inviteStatus_in: [InviteStatus!]
+
+  """All values that are not contained in given list."""
+  inviteStatus_not_in: [InviteStatus!]
+  inviteToken: String
+
+  """All values that are not equal to given value."""
+  inviteToken_not: String
+
+  """All values that are contained in given list."""
+  inviteToken_in: [String!]
+
+  """All values that are not contained in given list."""
+  inviteToken_not_in: [String!]
+
+  """All values less than the given value."""
+  inviteToken_lt: String
+
+  """All values less than or equal the given value."""
+  inviteToken_lte: String
+
+  """All values greater than the given value."""
+  inviteToken_gt: String
+
+  """All values greater than or equal the given value."""
+  inviteToken_gte: String
+
+  """All values containing the given string."""
+  inviteToken_contains: String
+
+  """All values not containing the given string."""
+  inviteToken_not_contains: String
+
+  """All values starting with the given string."""
+  inviteToken_starts_with: String
+
+  """All values not starting with the given string."""
+  inviteToken_not_starts_with: String
+
+  """All values ending with the given string."""
+  inviteToken_ends_with: String
+
+  """All values not ending with the given string."""
+  inviteToken_not_ends_with: String
+  inviteTokenExpiry: Float
+
+  """All values that are not equal to given value."""
+  inviteTokenExpiry_not: Float
+
+  """All values that are contained in given list."""
+  inviteTokenExpiry_in: [Float!]
+
+  """All values that are not contained in given list."""
+  inviteTokenExpiry_not_in: [Float!]
+
+  """All values less than the given value."""
+  inviteTokenExpiry_lt: Float
+
+  """All values less than or equal the given value."""
+  inviteTokenExpiry_lte: Float
+
+  """All values greater than the given value."""
+  inviteTokenExpiry_gt: Float
+
+  """All values greater than or equal the given value."""
+  inviteTokenExpiry_gte: Float
+  household: HouseholdWhereInput
+  invitedBy: UserWhereInput
+}
+
+input InviteWhereUniqueInput {
+  id: ID
+  inviteToken: String
+}
+
 """
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
@@ -1460,24 +1793,30 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createInvite(data: InviteCreateInput!): Invite!
+  createChore(data: ChoreCreateInput!): Chore!
   createUser(data: UserCreateInput!): User!
   createHousehold(data: HouseholdCreateInput!): Household!
-  createChore(data: ChoreCreateInput!): Chore!
+  updateInvite(data: InviteUpdateInput!, where: InviteWhereUniqueInput!): Invite
+  updateChore(data: ChoreUpdateInput!, where: ChoreWhereUniqueInput!): Chore
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateHousehold(data: HouseholdUpdateInput!, where: HouseholdWhereUniqueInput!): Household
-  updateChore(data: ChoreUpdateInput!, where: ChoreWhereUniqueInput!): Chore
+  deleteInvite(where: InviteWhereUniqueInput!): Invite
+  deleteChore(where: ChoreWhereUniqueInput!): Chore
   deleteUser(where: UserWhereUniqueInput!): User
   deleteHousehold(where: HouseholdWhereUniqueInput!): Household
-  deleteChore(where: ChoreWhereUniqueInput!): Chore
+  upsertInvite(where: InviteWhereUniqueInput!, create: InviteCreateInput!, update: InviteUpdateInput!): Invite!
+  upsertChore(where: ChoreWhereUniqueInput!, create: ChoreCreateInput!, update: ChoreUpdateInput!): Chore!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertHousehold(where: HouseholdWhereUniqueInput!, create: HouseholdCreateInput!, update: HouseholdUpdateInput!): Household!
-  upsertChore(where: ChoreWhereUniqueInput!, create: ChoreCreateInput!, update: ChoreUpdateInput!): Chore!
+  updateManyInvites(data: InviteUpdateManyMutationInput!, where: InviteWhereInput): BatchPayload!
+  updateManyChores(data: ChoreUpdateManyMutationInput!, where: ChoreWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyHouseholds(data: HouseholdUpdateManyMutationInput!, where: HouseholdWhereInput): BatchPayload!
-  updateManyChores(data: ChoreUpdateManyMutationInput!, where: ChoreWhereInput): BatchPayload!
+  deleteManyInvites(where: InviteWhereInput): BatchPayload!
+  deleteManyChores(where: ChoreWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyHouseholds(where: HouseholdWhereInput): BatchPayload!
-  deleteManyChores(where: ChoreWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1515,15 +1854,18 @@ enum Permissions {
 }
 
 type Query {
+  invites(where: InviteWhereInput, orderBy: InviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Invite]!
+  chores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   households(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household]!
-  chores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore]!
+  invite(where: InviteWhereUniqueInput!): Invite
+  chore(where: ChoreWhereUniqueInput!): Chore
   user(where: UserWhereUniqueInput!): User
   household(where: HouseholdWhereUniqueInput!): Household
-  chore(where: ChoreWhereUniqueInput!): Chore
+  invitesConnection(where: InviteWhereInput, orderBy: InviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InviteConnection!
+  choresConnection(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   householdsConnection(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HouseholdConnection!
-  choresConnection(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1533,9 +1875,10 @@ type Query {
 }
 
 type Subscription {
+  invite(where: InviteSubscriptionWhereInput): InviteSubscriptionPayload
+  chore(where: ChoreSubscriptionWhereInput): ChoreSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   household(where: HouseholdSubscriptionWhereInput): HouseholdSubscriptionPayload
-  chore(where: ChoreSubscriptionWhereInput): ChoreSubscriptionPayload
 }
 
 type User implements Node {
@@ -1596,6 +1939,11 @@ input UserCreateManyWithoutHouseholdsInput {
 input UserCreateManyWithoutHouseholdsManagedInput {
   create: [UserCreateWithoutHouseholdsManagedInput!]
   connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutCreatedChoresInput {
@@ -1987,6 +2335,20 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreUpdateManyWithoutCreatedByInput
+  assigned: ChoreUpdateManyWithoutAssignedInput
+  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
@@ -2070,6 +2432,13 @@ input UserUpdateManyWithoutHouseholdsManagedInput {
 input UserUpdateManyWithWhereNestedInput {
   where: UserScalarWhereInput!
   data: UserUpdateManyDataInput!
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
 }
 
 input UserUpdateOneRequiredWithoutCreatedChoresInput {
@@ -2166,6 +2535,11 @@ input UserUpdateWithWhereUniqueWithoutHouseholdsInput {
 input UserUpdateWithWhereUniqueWithoutHouseholdsManagedInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutHouseholdsManagedDataInput!
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutCreatedChoresInput {

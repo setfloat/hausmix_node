@@ -5,6 +5,12 @@ enum Permissions {
   YOUTH
 }
 
+enum InviteStatus {
+  PENDING
+  DENIED
+  ACCEPTED
+}
+
 type User {
   id: ID! @unique
   name: String!
@@ -25,6 +31,18 @@ type Household {
   name: String!
   houseMembers: [User]! @relation(name: "HouseMembers")
   headsOfHouse: [User]! @relation(name: "HeadsOfHouse")
+}
+
+type Invite {
+  id: ID! @unique
+  household: Household!
+  invitedBy: User! @relation(name: "InvitedBy")
+  invitedEmail: String!
+  # invitedUser: User @relation(name: "InvitedUser")
+  invitedIsUser: Boolean!
+  inviteStatus: InviteStatus!
+  inviteToken: String @unique
+  inviteTokenExpiry: Float
 }
 
 type Chore {

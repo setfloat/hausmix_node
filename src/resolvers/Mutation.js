@@ -18,7 +18,7 @@ const {
   updateChoreInstance,
   markCompletechoreInstancesToUpdateQuery,
   createInstanceFromRepeatingFunc
-} = require("./mutations/markcomplete");
+} = require("./mutations/markComplete");
 const Query = require("./Query");
 
 const createJWTAndCookie = (userId, ctx) => {

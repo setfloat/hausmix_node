@@ -12,7 +12,7 @@ const {
   choreInstancesToUpdateQuery,
   updatedInstanceFunc,
   overdueCreateInstanceFromRepeatingFunc
-} = require("./mutations/thievingMarkcomplete");
+} = require("./mutations/thievingMarkComplete");
 
 const {
   updateChoreInstance,

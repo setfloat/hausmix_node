@@ -27,6 +27,7 @@ Hausmix helps with scheduling chores and incentivising their completion through 
 
 - Node.js
 - Prisma
+- MySQL
 - GraphQL
 - GraphQL Yoga
 - MySQL

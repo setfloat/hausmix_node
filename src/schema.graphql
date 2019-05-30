@@ -19,29 +19,18 @@ type User {
 }
 
 type Query {
-  # user: User!
   invite(inviteToken: String!): Invite
-  users: [User]!
   loggedInUser: User
   currentHousehold(id: String!): Household!
   households: [Household]
+  choreTemplate(id: String!): ChoreTemplate
+  houseSingleUserDebts(householdId: String!, specificUserId: String!): [Debt]
 }
 
 type Mutation {
   signIn(email: String!, password: String!): User!
   signOut: SuccessMessage
   signUp(email: String!, password: String!, name: String!): User!
-  createChore(
-    name: String!
-    description: String
-    choreStatus: String
-    choreCost: Float
-    timeCost: Float
-    repeating: Boolean
-    peopleRequired: Float
-    rotationType: String
-    frequency: String
-  ): Chore!
   createHousehold(name: String!): Household!
   createInvite(householdId: String!, invitedEmail: String!): Invite
   acceptInvite(
@@ -50,4 +39,31 @@ type Mutation {
     password: String!
     name: String!
   ): User!
+  createChoreTemplate(
+    name: String!
+    description: String
+    choreTemplateCost: Float
+    household: String!
+    frequency: String!
+  ): ChoreTemplate!
+  createAssignChoreMutation(
+    name: String!
+    currentAssigned: [String!]!
+    choreTemplate: String
+    instanceCost: Float!
+    startDate: DateTime!
+    deadline: DateTime!
+    completionStatus: ChoreCompleteStatus!
+    household: String!
+  ): ChoreInstance
+  markComplete(id: String!): ChoreInstance
+  thievingMarkComplete(id: String!): ChoreInstance
+  cancelDebt(id: String!): Debt
+  settleDebt(id: String!): Debt
+  unpayDebt(id: String!): Debt
+  settleAllDebts(
+    specificUserId: String
+    householdId: String
+    totalPayment: Float
+  ): [Debt]
 }

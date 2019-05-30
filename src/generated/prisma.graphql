@@ -1,7 +1,15 @@
-# source: https://us1.prisma.sh/patrick-richardson-01c5e7/chore/dev
-# timestamp: Sun Apr 14 2019 14:26:30 GMT-0700 (Pacific Daylight Time)
+# source: https://us1.prisma.sh/patrick-richardson-01c5e7/hausmix/dev
+# timestamp: Mon May 27 2019 16:18:31 GMT-0700 (Pacific Daylight Time)
 
-type AggregateChore {
+type AggregateChoreInstance {
+  count: Int!
+}
+
+type AggregateChoreTemplate {
+  count: Int!
+}
+
+type AggregateDebt {
   count: Int!
 }
 
@@ -22,174 +30,167 @@ type BatchPayload {
   count: Long!
 }
 
-type Chore implements Node {
+enum ChoreCompleteStatus {
+  INCOMPLETE
+  COMPLETE
+  OVERDUE
+}
+
+enum ChoreFrequency {
+  Once
+  Daily
+  Weekly
+  Monthly
+  Quarterly
+  Yearly
+}
+
+type ChoreInstance implements Node {
   id: ID!
   name: String!
-  createdBy: User!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
-  deadline: DateTime
-  repeating: Boolean
   currentAssigned(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  assigned(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  startDate: DateTime
+  deadline: DateTime
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  household: Household!
+  debts(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Debt!]
+  choreTemplate: ChoreTemplate!
 }
 
 """A connection to a list of items."""
-type ChoreConnection {
+type ChoreInstanceConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [ChoreEdge]!
-  aggregate: AggregateChore!
+  edges: [ChoreInstanceEdge]!
+  aggregate: AggregateChoreInstance!
 }
 
-input ChoreCreateInput {
+input ChoreInstanceCreateInput {
   id: ID
   name: String!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserCreateManyWithoutCurrentAssignedInput
-  assigned: UserCreateManyWithoutAssignedInput
+  household: HouseholdCreateOneWithoutChoreInstancesInput!
+  debts: DebtCreateManyWithoutFromInput
+  choreTemplate: ChoreTemplateCreateOneWithoutInstancesInput!
 }
 
-input ChoreCreateManyWithoutAssignedInput {
-  create: [ChoreCreateWithoutAssignedInput!]
-  connect: [ChoreWhereUniqueInput!]
+input ChoreInstanceCreateManyWithoutChoreTemplateInput {
+  create: [ChoreInstanceCreateWithoutChoreTemplateInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
 }
 
-input ChoreCreateManyWithoutCreatedByInput {
-  create: [ChoreCreateWithoutCreatedByInput!]
-  connect: [ChoreWhereUniqueInput!]
+input ChoreInstanceCreateManyWithoutCurrentAssignedInput {
+  create: [ChoreInstanceCreateWithoutCurrentAssignedInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
 }
 
-input ChoreCreateManyWithoutCurrentAssignedInput {
-  create: [ChoreCreateWithoutCurrentAssignedInput!]
-  connect: [ChoreWhereUniqueInput!]
+input ChoreInstanceCreateManyWithoutHouseholdInput {
+  create: [ChoreInstanceCreateWithoutHouseholdInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
 }
 
-input ChoreCreateWithoutAssignedInput {
+input ChoreInstanceCreateOneWithoutDebtsInput {
+  create: ChoreInstanceCreateWithoutDebtsInput
+  connect: ChoreInstanceWhereUniqueInput
+}
+
+input ChoreInstanceCreateWithoutChoreTemplateInput {
   id: ID
   name: String!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserCreateManyWithoutCurrentAssignedInput
+  household: HouseholdCreateOneWithoutChoreInstancesInput!
+  debts: DebtCreateManyWithoutFromInput
 }
 
-input ChoreCreateWithoutCreatedByInput {
+input ChoreInstanceCreateWithoutCurrentAssignedInput {
   id: ID
   name: String!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  household: HouseholdCreateOneWithoutChoreInstancesInput!
+  debts: DebtCreateManyWithoutFromInput
+  choreTemplate: ChoreTemplateCreateOneWithoutInstancesInput!
+}
+
+input ChoreInstanceCreateWithoutDebtsInput {
+  id: ID
+  name: String!
+  startDate: DateTime
+  deadline: DateTime
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserCreateManyWithoutCurrentAssignedInput
-  assigned: UserCreateManyWithoutAssignedInput
+  household: HouseholdCreateOneWithoutChoreInstancesInput!
+  choreTemplate: ChoreTemplateCreateOneWithoutInstancesInput!
 }
 
-input ChoreCreateWithoutCurrentAssignedInput {
+input ChoreInstanceCreateWithoutHouseholdInput {
   id: ID
   name: String!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserCreateOneWithoutCreatedChoresInput!
-  assigned: UserCreateManyWithoutAssignedInput
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  currentAssigned: UserCreateManyWithoutCurrentAssignedInput
+  debts: DebtCreateManyWithoutFromInput
+  choreTemplate: ChoreTemplateCreateOneWithoutInstancesInput!
 }
 
 """An edge in a connection."""
-type ChoreEdge {
+type ChoreInstanceEdge {
   """The item at the end of the edge."""
-  node: Chore!
+  node: ChoreInstance!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum ChoreOrderByInput {
+enum ChoreInstanceOrderByInput {
   id_ASC
   id_DESC
   name_ASC
   name_DESC
-  description_ASC
-  description_DESC
-  choreStatus_ASC
-  choreStatus_DESC
-  choreCost_ASC
-  choreCost_DESC
-  timeCost_ASC
-  timeCost_DESC
+  startDate_ASC
+  startDate_DESC
   deadline_ASC
   deadline_DESC
-  repeating_ASC
-  repeating_DESC
-  peopleRequired_ASC
-  peopleRequired_DESC
-  rotationType_ASC
-  rotationType_DESC
-  frequency_ASC
-  frequency_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
+  instanceCost_ASC
+  instanceCost_DESC
+  completionStatus_ASC
+  completionStatus_DESC
 }
 
-type ChorePreviousValues {
+type ChoreInstancePreviousValues {
   id: ID!
   name: String!
-  description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
 }
 
-input ChoreScalarWhereInput {
+input ChoreInstanceScalarWhereInput {
   """Logical AND on all given filters."""
-  AND: [ChoreScalarWhereInput!]
+  AND: [ChoreInstanceScalarWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [ChoreScalarWhereInput!]
+  OR: [ChoreInstanceScalarWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [ChoreScalarWhereInput!]
+  NOT: [ChoreInstanceScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -270,130 +271,28 @@ input ChoreScalarWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
-  description: String
+  startDate: DateTime
 
   """All values that are not equal to given value."""
-  description_not: String
+  startDate_not: DateTime
 
   """All values that are contained in given list."""
-  description_in: [String!]
+  startDate_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  description_not_in: [String!]
+  startDate_not_in: [DateTime!]
 
   """All values less than the given value."""
-  description_lt: String
+  startDate_lt: DateTime
 
   """All values less than or equal the given value."""
-  description_lte: String
+  startDate_lte: DateTime
 
   """All values greater than the given value."""
-  description_gt: String
+  startDate_gt: DateTime
 
   """All values greater than or equal the given value."""
-  description_gte: String
-
-  """All values containing the given string."""
-  description_contains: String
-
-  """All values not containing the given string."""
-  description_not_contains: String
-
-  """All values starting with the given string."""
-  description_starts_with: String
-
-  """All values not starting with the given string."""
-  description_not_starts_with: String
-
-  """All values ending with the given string."""
-  description_ends_with: String
-
-  """All values not ending with the given string."""
-  description_not_ends_with: String
-  choreStatus: String
-
-  """All values that are not equal to given value."""
-  choreStatus_not: String
-
-  """All values that are contained in given list."""
-  choreStatus_in: [String!]
-
-  """All values that are not contained in given list."""
-  choreStatus_not_in: [String!]
-
-  """All values less than the given value."""
-  choreStatus_lt: String
-
-  """All values less than or equal the given value."""
-  choreStatus_lte: String
-
-  """All values greater than the given value."""
-  choreStatus_gt: String
-
-  """All values greater than or equal the given value."""
-  choreStatus_gte: String
-
-  """All values containing the given string."""
-  choreStatus_contains: String
-
-  """All values not containing the given string."""
-  choreStatus_not_contains: String
-
-  """All values starting with the given string."""
-  choreStatus_starts_with: String
-
-  """All values not starting with the given string."""
-  choreStatus_not_starts_with: String
-
-  """All values ending with the given string."""
-  choreStatus_ends_with: String
-
-  """All values not ending with the given string."""
-  choreStatus_not_ends_with: String
-  choreCost: Float
-
-  """All values that are not equal to given value."""
-  choreCost_not: Float
-
-  """All values that are contained in given list."""
-  choreCost_in: [Float!]
-
-  """All values that are not contained in given list."""
-  choreCost_not_in: [Float!]
-
-  """All values less than the given value."""
-  choreCost_lt: Float
-
-  """All values less than or equal the given value."""
-  choreCost_lte: Float
-
-  """All values greater than the given value."""
-  choreCost_gt: Float
-
-  """All values greater than or equal the given value."""
-  choreCost_gte: Float
-  timeCost: Float
-
-  """All values that are not equal to given value."""
-  timeCost_not: Float
-
-  """All values that are contained in given list."""
-  timeCost_in: [Float!]
-
-  """All values that are not contained in given list."""
-  timeCost_not_in: [Float!]
-
-  """All values less than the given value."""
-  timeCost_lt: Float
-
-  """All values less than or equal the given value."""
-  timeCost_lte: Float
-
-  """All values greater than the given value."""
-  timeCost_gt: Float
-
-  """All values greater than or equal the given value."""
-  timeCost_gte: Float
+  startDate_gte: DateTime
   deadline: DateTime
 
   """All values that are not equal to given value."""
@@ -416,130 +315,56 @@ input ChoreScalarWhereInput {
 
   """All values greater than or equal the given value."""
   deadline_gte: DateTime
-  repeating: Boolean
+  instanceCost: Float
 
   """All values that are not equal to given value."""
-  repeating_not: Boolean
-  peopleRequired: Float
-
-  """All values that are not equal to given value."""
-  peopleRequired_not: Float
+  instanceCost_not: Float
 
   """All values that are contained in given list."""
-  peopleRequired_in: [Float!]
+  instanceCost_in: [Float!]
 
   """All values that are not contained in given list."""
-  peopleRequired_not_in: [Float!]
+  instanceCost_not_in: [Float!]
 
   """All values less than the given value."""
-  peopleRequired_lt: Float
+  instanceCost_lt: Float
 
   """All values less than or equal the given value."""
-  peopleRequired_lte: Float
+  instanceCost_lte: Float
 
   """All values greater than the given value."""
-  peopleRequired_gt: Float
+  instanceCost_gt: Float
 
   """All values greater than or equal the given value."""
-  peopleRequired_gte: Float
-  rotationType: String
+  instanceCost_gte: Float
+  completionStatus: ChoreCompleteStatus
 
   """All values that are not equal to given value."""
-  rotationType_not: String
+  completionStatus_not: ChoreCompleteStatus
 
   """All values that are contained in given list."""
-  rotationType_in: [String!]
+  completionStatus_in: [ChoreCompleteStatus!]
 
   """All values that are not contained in given list."""
-  rotationType_not_in: [String!]
-
-  """All values less than the given value."""
-  rotationType_lt: String
-
-  """All values less than or equal the given value."""
-  rotationType_lte: String
-
-  """All values greater than the given value."""
-  rotationType_gt: String
-
-  """All values greater than or equal the given value."""
-  rotationType_gte: String
-
-  """All values containing the given string."""
-  rotationType_contains: String
-
-  """All values not containing the given string."""
-  rotationType_not_contains: String
-
-  """All values starting with the given string."""
-  rotationType_starts_with: String
-
-  """All values not starting with the given string."""
-  rotationType_not_starts_with: String
-
-  """All values ending with the given string."""
-  rotationType_ends_with: String
-
-  """All values not ending with the given string."""
-  rotationType_not_ends_with: String
-  frequency: String
-
-  """All values that are not equal to given value."""
-  frequency_not: String
-
-  """All values that are contained in given list."""
-  frequency_in: [String!]
-
-  """All values that are not contained in given list."""
-  frequency_not_in: [String!]
-
-  """All values less than the given value."""
-  frequency_lt: String
-
-  """All values less than or equal the given value."""
-  frequency_lte: String
-
-  """All values greater than the given value."""
-  frequency_gt: String
-
-  """All values greater than or equal the given value."""
-  frequency_gte: String
-
-  """All values containing the given string."""
-  frequency_contains: String
-
-  """All values not containing the given string."""
-  frequency_not_contains: String
-
-  """All values starting with the given string."""
-  frequency_starts_with: String
-
-  """All values not starting with the given string."""
-  frequency_not_starts_with: String
-
-  """All values ending with the given string."""
-  frequency_ends_with: String
-
-  """All values not ending with the given string."""
-  frequency_not_ends_with: String
+  completionStatus_not_in: [ChoreCompleteStatus!]
 }
 
-type ChoreSubscriptionPayload {
+type ChoreInstanceSubscriptionPayload {
   mutation: MutationType!
-  node: Chore
+  node: ChoreInstance
   updatedFields: [String!]
-  previousValues: ChorePreviousValues
+  previousValues: ChoreInstancePreviousValues
 }
 
-input ChoreSubscriptionWhereInput {
+input ChoreInstanceSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [ChoreSubscriptionWhereInput!]
+  AND: [ChoreInstanceSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [ChoreSubscriptionWhereInput!]
+  OR: [ChoreInstanceSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [ChoreSubscriptionWhereInput!]
+  NOT: [ChoreInstanceSubscriptionWhereInput!]
 
   """
   The subscription event gets dispatched when it's listed in mutation_in
@@ -560,179 +385,462 @@ input ChoreSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: ChoreWhereInput
+  node: ChoreInstanceWhereInput
 }
 
-input ChoreUpdateInput {
+input ChoreInstanceUpdateInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
-  assigned: UserUpdateManyWithoutAssignedInput
+  household: HouseholdUpdateOneRequiredWithoutChoreInstancesInput
+  debts: DebtUpdateManyWithoutFromInput
+  choreTemplate: ChoreTemplateUpdateOneRequiredWithoutInstancesInput
 }
 
-input ChoreUpdateManyDataInput {
+input ChoreInstanceUpdateManyDataInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
 }
 
-input ChoreUpdateManyMutationInput {
+input ChoreInstanceUpdateManyMutationInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
 }
 
-input ChoreUpdateManyWithoutAssignedInput {
-  create: [ChoreCreateWithoutAssignedInput!]
-  connect: [ChoreWhereUniqueInput!]
-  set: [ChoreWhereUniqueInput!]
-  disconnect: [ChoreWhereUniqueInput!]
-  delete: [ChoreWhereUniqueInput!]
-  update: [ChoreUpdateWithWhereUniqueWithoutAssignedInput!]
-  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
-  deleteMany: [ChoreScalarWhereInput!]
-  upsert: [ChoreUpsertWithWhereUniqueWithoutAssignedInput!]
+input ChoreInstanceUpdateManyWithoutChoreTemplateInput {
+  create: [ChoreInstanceCreateWithoutChoreTemplateInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
+  set: [ChoreInstanceWhereUniqueInput!]
+  disconnect: [ChoreInstanceWhereUniqueInput!]
+  delete: [ChoreInstanceWhereUniqueInput!]
+  update: [ChoreInstanceUpdateWithWhereUniqueWithoutChoreTemplateInput!]
+  updateMany: [ChoreInstanceUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreInstanceScalarWhereInput!]
+  upsert: [ChoreInstanceUpsertWithWhereUniqueWithoutChoreTemplateInput!]
 }
 
-input ChoreUpdateManyWithoutCreatedByInput {
-  create: [ChoreCreateWithoutCreatedByInput!]
-  connect: [ChoreWhereUniqueInput!]
-  set: [ChoreWhereUniqueInput!]
-  disconnect: [ChoreWhereUniqueInput!]
-  delete: [ChoreWhereUniqueInput!]
-  update: [ChoreUpdateWithWhereUniqueWithoutCreatedByInput!]
-  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
-  deleteMany: [ChoreScalarWhereInput!]
-  upsert: [ChoreUpsertWithWhereUniqueWithoutCreatedByInput!]
+input ChoreInstanceUpdateManyWithoutCurrentAssignedInput {
+  create: [ChoreInstanceCreateWithoutCurrentAssignedInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
+  set: [ChoreInstanceWhereUniqueInput!]
+  disconnect: [ChoreInstanceWhereUniqueInput!]
+  delete: [ChoreInstanceWhereUniqueInput!]
+  update: [ChoreInstanceUpdateWithWhereUniqueWithoutCurrentAssignedInput!]
+  updateMany: [ChoreInstanceUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreInstanceScalarWhereInput!]
+  upsert: [ChoreInstanceUpsertWithWhereUniqueWithoutCurrentAssignedInput!]
 }
 
-input ChoreUpdateManyWithoutCurrentAssignedInput {
-  create: [ChoreCreateWithoutCurrentAssignedInput!]
-  connect: [ChoreWhereUniqueInput!]
-  set: [ChoreWhereUniqueInput!]
-  disconnect: [ChoreWhereUniqueInput!]
-  delete: [ChoreWhereUniqueInput!]
-  update: [ChoreUpdateWithWhereUniqueWithoutCurrentAssignedInput!]
-  updateMany: [ChoreUpdateManyWithWhereNestedInput!]
-  deleteMany: [ChoreScalarWhereInput!]
-  upsert: [ChoreUpsertWithWhereUniqueWithoutCurrentAssignedInput!]
+input ChoreInstanceUpdateManyWithoutHouseholdInput {
+  create: [ChoreInstanceCreateWithoutHouseholdInput!]
+  connect: [ChoreInstanceWhereUniqueInput!]
+  set: [ChoreInstanceWhereUniqueInput!]
+  disconnect: [ChoreInstanceWhereUniqueInput!]
+  delete: [ChoreInstanceWhereUniqueInput!]
+  update: [ChoreInstanceUpdateWithWhereUniqueWithoutHouseholdInput!]
+  updateMany: [ChoreInstanceUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreInstanceScalarWhereInput!]
+  upsert: [ChoreInstanceUpsertWithWhereUniqueWithoutHouseholdInput!]
 }
 
-input ChoreUpdateManyWithWhereNestedInput {
-  where: ChoreScalarWhereInput!
-  data: ChoreUpdateManyDataInput!
+input ChoreInstanceUpdateManyWithWhereNestedInput {
+  where: ChoreInstanceScalarWhereInput!
+  data: ChoreInstanceUpdateManyDataInput!
 }
 
-input ChoreUpdateWithoutAssignedDataInput {
+input ChoreInstanceUpdateOneRequiredWithoutDebtsInput {
+  create: ChoreInstanceCreateWithoutDebtsInput
+  connect: ChoreInstanceWhereUniqueInput
+  update: ChoreInstanceUpdateWithoutDebtsDataInput
+  upsert: ChoreInstanceUpsertWithoutDebtsInput
+}
+
+input ChoreInstanceUpdateWithoutChoreTemplateDataInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
+  household: HouseholdUpdateOneRequiredWithoutChoreInstancesInput
+  debts: DebtUpdateManyWithoutFromInput
 }
 
-input ChoreUpdateWithoutCreatedByDataInput {
+input ChoreInstanceUpdateWithoutCurrentAssignedDataInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  household: HouseholdUpdateOneRequiredWithoutChoreInstancesInput
+  debts: DebtUpdateManyWithoutFromInput
+  choreTemplate: ChoreTemplateUpdateOneRequiredWithoutInstancesInput
+}
+
+input ChoreInstanceUpdateWithoutDebtsDataInput {
+  name: String
+  startDate: DateTime
+  deadline: DateTime
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
   currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
-  assigned: UserUpdateManyWithoutAssignedInput
+  household: HouseholdUpdateOneRequiredWithoutChoreInstancesInput
+  choreTemplate: ChoreTemplateUpdateOneRequiredWithoutInstancesInput
 }
 
-input ChoreUpdateWithoutCurrentAssignedDataInput {
+input ChoreInstanceUpdateWithoutHouseholdDataInput {
   name: String
-  description: String
-  choreStatus: String
-  choreCost: Float
-  timeCost: Float
+  startDate: DateTime
   deadline: DateTime
-  repeating: Boolean
-  peopleRequired: Float
-  rotationType: String
-  frequency: String
-  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
-  assigned: UserUpdateManyWithoutAssignedInput
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  currentAssigned: UserUpdateManyWithoutCurrentAssignedInput
+  debts: DebtUpdateManyWithoutFromInput
+  choreTemplate: ChoreTemplateUpdateOneRequiredWithoutInstancesInput
 }
 
-input ChoreUpdateWithWhereUniqueWithoutAssignedInput {
-  where: ChoreWhereUniqueInput!
-  data: ChoreUpdateWithoutAssignedDataInput!
+input ChoreInstanceUpdateWithWhereUniqueWithoutChoreTemplateInput {
+  where: ChoreInstanceWhereUniqueInput!
+  data: ChoreInstanceUpdateWithoutChoreTemplateDataInput!
 }
 
-input ChoreUpdateWithWhereUniqueWithoutCreatedByInput {
-  where: ChoreWhereUniqueInput!
-  data: ChoreUpdateWithoutCreatedByDataInput!
+input ChoreInstanceUpdateWithWhereUniqueWithoutCurrentAssignedInput {
+  where: ChoreInstanceWhereUniqueInput!
+  data: ChoreInstanceUpdateWithoutCurrentAssignedDataInput!
 }
 
-input ChoreUpdateWithWhereUniqueWithoutCurrentAssignedInput {
-  where: ChoreWhereUniqueInput!
-  data: ChoreUpdateWithoutCurrentAssignedDataInput!
+input ChoreInstanceUpdateWithWhereUniqueWithoutHouseholdInput {
+  where: ChoreInstanceWhereUniqueInput!
+  data: ChoreInstanceUpdateWithoutHouseholdDataInput!
 }
 
-input ChoreUpsertWithWhereUniqueWithoutAssignedInput {
-  where: ChoreWhereUniqueInput!
-  update: ChoreUpdateWithoutAssignedDataInput!
-  create: ChoreCreateWithoutAssignedInput!
+input ChoreInstanceUpsertWithoutDebtsInput {
+  update: ChoreInstanceUpdateWithoutDebtsDataInput!
+  create: ChoreInstanceCreateWithoutDebtsInput!
 }
 
-input ChoreUpsertWithWhereUniqueWithoutCreatedByInput {
-  where: ChoreWhereUniqueInput!
-  update: ChoreUpdateWithoutCreatedByDataInput!
-  create: ChoreCreateWithoutCreatedByInput!
+input ChoreInstanceUpsertWithWhereUniqueWithoutChoreTemplateInput {
+  where: ChoreInstanceWhereUniqueInput!
+  update: ChoreInstanceUpdateWithoutChoreTemplateDataInput!
+  create: ChoreInstanceCreateWithoutChoreTemplateInput!
 }
 
-input ChoreUpsertWithWhereUniqueWithoutCurrentAssignedInput {
-  where: ChoreWhereUniqueInput!
-  update: ChoreUpdateWithoutCurrentAssignedDataInput!
-  create: ChoreCreateWithoutCurrentAssignedInput!
+input ChoreInstanceUpsertWithWhereUniqueWithoutCurrentAssignedInput {
+  where: ChoreInstanceWhereUniqueInput!
+  update: ChoreInstanceUpdateWithoutCurrentAssignedDataInput!
+  create: ChoreInstanceCreateWithoutCurrentAssignedInput!
 }
 
-input ChoreWhereInput {
+input ChoreInstanceUpsertWithWhereUniqueWithoutHouseholdInput {
+  where: ChoreInstanceWhereUniqueInput!
+  update: ChoreInstanceUpdateWithoutHouseholdDataInput!
+  create: ChoreInstanceCreateWithoutHouseholdInput!
+}
+
+input ChoreInstanceWhereInput {
   """Logical AND on all given filters."""
-  AND: [ChoreWhereInput!]
+  AND: [ChoreInstanceWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [ChoreWhereInput!]
+  OR: [ChoreInstanceWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [ChoreWhereInput!]
+  NOT: [ChoreInstanceWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  startDate: DateTime
+
+  """All values that are not equal to given value."""
+  startDate_not: DateTime
+
+  """All values that are contained in given list."""
+  startDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  startDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  startDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  startDate_lte: DateTime
+
+  """All values greater than the given value."""
+  startDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  startDate_gte: DateTime
+  deadline: DateTime
+
+  """All values that are not equal to given value."""
+  deadline_not: DateTime
+
+  """All values that are contained in given list."""
+  deadline_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  deadline_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  deadline_lt: DateTime
+
+  """All values less than or equal the given value."""
+  deadline_lte: DateTime
+
+  """All values greater than the given value."""
+  deadline_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  deadline_gte: DateTime
+  instanceCost: Float
+
+  """All values that are not equal to given value."""
+  instanceCost_not: Float
+
+  """All values that are contained in given list."""
+  instanceCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  instanceCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  instanceCost_lt: Float
+
+  """All values less than or equal the given value."""
+  instanceCost_lte: Float
+
+  """All values greater than the given value."""
+  instanceCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  instanceCost_gte: Float
+  completionStatus: ChoreCompleteStatus
+
+  """All values that are not equal to given value."""
+  completionStatus_not: ChoreCompleteStatus
+
+  """All values that are contained in given list."""
+  completionStatus_in: [ChoreCompleteStatus!]
+
+  """All values that are not contained in given list."""
+  completionStatus_not_in: [ChoreCompleteStatus!]
+  currentAssigned_every: UserWhereInput
+  currentAssigned_some: UserWhereInput
+  currentAssigned_none: UserWhereInput
+  household: HouseholdWhereInput
+  debts_every: DebtWhereInput
+  debts_some: DebtWhereInput
+  debts_none: DebtWhereInput
+  choreTemplate: ChoreTemplateWhereInput
+}
+
+input ChoreInstanceWhereUniqueInput {
+  id: ID
+}
+
+type ChoreTemplate implements Node {
+  id: ID!
+  name: String!
+  createdBy: User!
+  description: String
+  choreTemplateCost: Float
+  instances(where: ChoreInstanceWhereInput, orderBy: ChoreInstanceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreInstance!]
+  household: Household!
+  frequency: ChoreFrequency
+}
+
+"""A connection to a list of items."""
+type ChoreTemplateConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ChoreTemplateEdge]!
+  aggregate: AggregateChoreTemplate!
+}
+
+input ChoreTemplateCreateInput {
+  id: ID
+  name: String!
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  instances: ChoreInstanceCreateManyWithoutChoreTemplateInput
+  household: HouseholdCreateOneWithoutChoreTemplatesInput!
+}
+
+input ChoreTemplateCreateManyWithoutCreatedByInput {
+  create: [ChoreTemplateCreateWithoutCreatedByInput!]
+  connect: [ChoreTemplateWhereUniqueInput!]
+}
+
+input ChoreTemplateCreateManyWithoutHouseholdInput {
+  create: [ChoreTemplateCreateWithoutHouseholdInput!]
+  connect: [ChoreTemplateWhereUniqueInput!]
+}
+
+input ChoreTemplateCreateOneWithoutInstancesInput {
+  create: ChoreTemplateCreateWithoutInstancesInput
+  connect: ChoreTemplateWhereUniqueInput
+}
+
+input ChoreTemplateCreateWithoutCreatedByInput {
+  id: ID
+  name: String!
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  instances: ChoreInstanceCreateManyWithoutChoreTemplateInput
+  household: HouseholdCreateOneWithoutChoreTemplatesInput!
+}
+
+input ChoreTemplateCreateWithoutHouseholdInput {
+  id: ID
+  name: String!
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  instances: ChoreInstanceCreateManyWithoutChoreTemplateInput
+}
+
+input ChoreTemplateCreateWithoutInstancesInput {
+  id: ID
+  name: String!
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserCreateOneWithoutCreatedChoresInput!
+  household: HouseholdCreateOneWithoutChoreTemplatesInput!
+}
+
+"""An edge in a connection."""
+type ChoreTemplateEdge {
+  """The item at the end of the edge."""
+  node: ChoreTemplate!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ChoreTemplateOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  choreTemplateCost_ASC
+  choreTemplateCost_DESC
+  frequency_ASC
+  frequency_DESC
+}
+
+type ChoreTemplatePreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+}
+
+input ChoreTemplateScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreTemplateScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreTemplateScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreTemplateScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -853,238 +961,914 @@ input ChoreWhereInput {
 
   """All values not ending with the given string."""
   description_not_ends_with: String
-  choreStatus: String
+  choreTemplateCost: Float
 
   """All values that are not equal to given value."""
-  choreStatus_not: String
+  choreTemplateCost_not: Float
 
   """All values that are contained in given list."""
-  choreStatus_in: [String!]
+  choreTemplateCost_in: [Float!]
 
   """All values that are not contained in given list."""
-  choreStatus_not_in: [String!]
+  choreTemplateCost_not_in: [Float!]
 
   """All values less than the given value."""
-  choreStatus_lt: String
+  choreTemplateCost_lt: Float
 
   """All values less than or equal the given value."""
-  choreStatus_lte: String
+  choreTemplateCost_lte: Float
 
   """All values greater than the given value."""
-  choreStatus_gt: String
+  choreTemplateCost_gt: Float
 
   """All values greater than or equal the given value."""
-  choreStatus_gte: String
-
-  """All values containing the given string."""
-  choreStatus_contains: String
-
-  """All values not containing the given string."""
-  choreStatus_not_contains: String
-
-  """All values starting with the given string."""
-  choreStatus_starts_with: String
-
-  """All values not starting with the given string."""
-  choreStatus_not_starts_with: String
-
-  """All values ending with the given string."""
-  choreStatus_ends_with: String
-
-  """All values not ending with the given string."""
-  choreStatus_not_ends_with: String
-  choreCost: Float
+  choreTemplateCost_gte: Float
+  frequency: ChoreFrequency
 
   """All values that are not equal to given value."""
-  choreCost_not: Float
+  frequency_not: ChoreFrequency
 
   """All values that are contained in given list."""
-  choreCost_in: [Float!]
+  frequency_in: [ChoreFrequency!]
 
   """All values that are not contained in given list."""
-  choreCost_not_in: [Float!]
-
-  """All values less than the given value."""
-  choreCost_lt: Float
-
-  """All values less than or equal the given value."""
-  choreCost_lte: Float
-
-  """All values greater than the given value."""
-  choreCost_gt: Float
-
-  """All values greater than or equal the given value."""
-  choreCost_gte: Float
-  timeCost: Float
-
-  """All values that are not equal to given value."""
-  timeCost_not: Float
-
-  """All values that are contained in given list."""
-  timeCost_in: [Float!]
-
-  """All values that are not contained in given list."""
-  timeCost_not_in: [Float!]
-
-  """All values less than the given value."""
-  timeCost_lt: Float
-
-  """All values less than or equal the given value."""
-  timeCost_lte: Float
-
-  """All values greater than the given value."""
-  timeCost_gt: Float
-
-  """All values greater than or equal the given value."""
-  timeCost_gte: Float
-  deadline: DateTime
-
-  """All values that are not equal to given value."""
-  deadline_not: DateTime
-
-  """All values that are contained in given list."""
-  deadline_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  deadline_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  deadline_lt: DateTime
-
-  """All values less than or equal the given value."""
-  deadline_lte: DateTime
-
-  """All values greater than the given value."""
-  deadline_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  deadline_gte: DateTime
-  repeating: Boolean
-
-  """All values that are not equal to given value."""
-  repeating_not: Boolean
-  peopleRequired: Float
-
-  """All values that are not equal to given value."""
-  peopleRequired_not: Float
-
-  """All values that are contained in given list."""
-  peopleRequired_in: [Float!]
-
-  """All values that are not contained in given list."""
-  peopleRequired_not_in: [Float!]
-
-  """All values less than the given value."""
-  peopleRequired_lt: Float
-
-  """All values less than or equal the given value."""
-  peopleRequired_lte: Float
-
-  """All values greater than the given value."""
-  peopleRequired_gt: Float
-
-  """All values greater than or equal the given value."""
-  peopleRequired_gte: Float
-  rotationType: String
-
-  """All values that are not equal to given value."""
-  rotationType_not: String
-
-  """All values that are contained in given list."""
-  rotationType_in: [String!]
-
-  """All values that are not contained in given list."""
-  rotationType_not_in: [String!]
-
-  """All values less than the given value."""
-  rotationType_lt: String
-
-  """All values less than or equal the given value."""
-  rotationType_lte: String
-
-  """All values greater than the given value."""
-  rotationType_gt: String
-
-  """All values greater than or equal the given value."""
-  rotationType_gte: String
-
-  """All values containing the given string."""
-  rotationType_contains: String
-
-  """All values not containing the given string."""
-  rotationType_not_contains: String
-
-  """All values starting with the given string."""
-  rotationType_starts_with: String
-
-  """All values not starting with the given string."""
-  rotationType_not_starts_with: String
-
-  """All values ending with the given string."""
-  rotationType_ends_with: String
-
-  """All values not ending with the given string."""
-  rotationType_not_ends_with: String
-  frequency: String
-
-  """All values that are not equal to given value."""
-  frequency_not: String
-
-  """All values that are contained in given list."""
-  frequency_in: [String!]
-
-  """All values that are not contained in given list."""
-  frequency_not_in: [String!]
-
-  """All values less than the given value."""
-  frequency_lt: String
-
-  """All values less than or equal the given value."""
-  frequency_lte: String
-
-  """All values greater than the given value."""
-  frequency_gt: String
-
-  """All values greater than or equal the given value."""
-  frequency_gte: String
-
-  """All values containing the given string."""
-  frequency_contains: String
-
-  """All values not containing the given string."""
-  frequency_not_contains: String
-
-  """All values starting with the given string."""
-  frequency_starts_with: String
-
-  """All values not starting with the given string."""
-  frequency_not_starts_with: String
-
-  """All values ending with the given string."""
-  frequency_ends_with: String
-
-  """All values not ending with the given string."""
-  frequency_not_ends_with: String
-  createdBy: UserWhereInput
-  currentAssigned_every: UserWhereInput
-  currentAssigned_some: UserWhereInput
-  currentAssigned_none: UserWhereInput
-  assigned_every: UserWhereInput
-  assigned_some: UserWhereInput
-  assigned_none: UserWhereInput
+  frequency_not_in: [ChoreFrequency!]
 }
 
-input ChoreWhereUniqueInput {
+type ChoreTemplateSubscriptionPayload {
+  mutation: MutationType!
+  node: ChoreTemplate
+  updatedFields: [String!]
+  previousValues: ChoreTemplatePreviousValues
+}
+
+input ChoreTemplateSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreTemplateSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreTemplateSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreTemplateSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ChoreTemplateWhereInput
+}
+
+input ChoreTemplateUpdateInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  instances: ChoreInstanceUpdateManyWithoutChoreTemplateInput
+  household: HouseholdUpdateOneRequiredWithoutChoreTemplatesInput
+}
+
+input ChoreTemplateUpdateManyDataInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+}
+
+input ChoreTemplateUpdateManyMutationInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+}
+
+input ChoreTemplateUpdateManyWithoutCreatedByInput {
+  create: [ChoreTemplateCreateWithoutCreatedByInput!]
+  connect: [ChoreTemplateWhereUniqueInput!]
+  set: [ChoreTemplateWhereUniqueInput!]
+  disconnect: [ChoreTemplateWhereUniqueInput!]
+  delete: [ChoreTemplateWhereUniqueInput!]
+  update: [ChoreTemplateUpdateWithWhereUniqueWithoutCreatedByInput!]
+  updateMany: [ChoreTemplateUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreTemplateScalarWhereInput!]
+  upsert: [ChoreTemplateUpsertWithWhereUniqueWithoutCreatedByInput!]
+}
+
+input ChoreTemplateUpdateManyWithoutHouseholdInput {
+  create: [ChoreTemplateCreateWithoutHouseholdInput!]
+  connect: [ChoreTemplateWhereUniqueInput!]
+  set: [ChoreTemplateWhereUniqueInput!]
+  disconnect: [ChoreTemplateWhereUniqueInput!]
+  delete: [ChoreTemplateWhereUniqueInput!]
+  update: [ChoreTemplateUpdateWithWhereUniqueWithoutHouseholdInput!]
+  updateMany: [ChoreTemplateUpdateManyWithWhereNestedInput!]
+  deleteMany: [ChoreTemplateScalarWhereInput!]
+  upsert: [ChoreTemplateUpsertWithWhereUniqueWithoutHouseholdInput!]
+}
+
+input ChoreTemplateUpdateManyWithWhereNestedInput {
+  where: ChoreTemplateScalarWhereInput!
+  data: ChoreTemplateUpdateManyDataInput!
+}
+
+input ChoreTemplateUpdateOneRequiredWithoutInstancesInput {
+  create: ChoreTemplateCreateWithoutInstancesInput
+  connect: ChoreTemplateWhereUniqueInput
+  update: ChoreTemplateUpdateWithoutInstancesDataInput
+  upsert: ChoreTemplateUpsertWithoutInstancesInput
+}
+
+input ChoreTemplateUpdateWithoutCreatedByDataInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  instances: ChoreInstanceUpdateManyWithoutChoreTemplateInput
+  household: HouseholdUpdateOneRequiredWithoutChoreTemplatesInput
+}
+
+input ChoreTemplateUpdateWithoutHouseholdDataInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  instances: ChoreInstanceUpdateManyWithoutChoreTemplateInput
+}
+
+input ChoreTemplateUpdateWithoutInstancesDataInput {
+  name: String
+  description: String
+  choreTemplateCost: Float
+  frequency: ChoreFrequency
+  createdBy: UserUpdateOneRequiredWithoutCreatedChoresInput
+  household: HouseholdUpdateOneRequiredWithoutChoreTemplatesInput
+}
+
+input ChoreTemplateUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: ChoreTemplateWhereUniqueInput!
+  data: ChoreTemplateUpdateWithoutCreatedByDataInput!
+}
+
+input ChoreTemplateUpdateWithWhereUniqueWithoutHouseholdInput {
+  where: ChoreTemplateWhereUniqueInput!
+  data: ChoreTemplateUpdateWithoutHouseholdDataInput!
+}
+
+input ChoreTemplateUpsertWithoutInstancesInput {
+  update: ChoreTemplateUpdateWithoutInstancesDataInput!
+  create: ChoreTemplateCreateWithoutInstancesInput!
+}
+
+input ChoreTemplateUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: ChoreTemplateWhereUniqueInput!
+  update: ChoreTemplateUpdateWithoutCreatedByDataInput!
+  create: ChoreTemplateCreateWithoutCreatedByInput!
+}
+
+input ChoreTemplateUpsertWithWhereUniqueWithoutHouseholdInput {
+  where: ChoreTemplateWhereUniqueInput!
+  update: ChoreTemplateUpdateWithoutHouseholdDataInput!
+  create: ChoreTemplateCreateWithoutHouseholdInput!
+}
+
+input ChoreTemplateWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ChoreTemplateWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ChoreTemplateWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ChoreTemplateWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  choreTemplateCost: Float
+
+  """All values that are not equal to given value."""
+  choreTemplateCost_not: Float
+
+  """All values that are contained in given list."""
+  choreTemplateCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  choreTemplateCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  choreTemplateCost_lt: Float
+
+  """All values less than or equal the given value."""
+  choreTemplateCost_lte: Float
+
+  """All values greater than the given value."""
+  choreTemplateCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  choreTemplateCost_gte: Float
+  frequency: ChoreFrequency
+
+  """All values that are not equal to given value."""
+  frequency_not: ChoreFrequency
+
+  """All values that are contained in given list."""
+  frequency_in: [ChoreFrequency!]
+
+  """All values that are not contained in given list."""
+  frequency_not_in: [ChoreFrequency!]
+  createdBy: UserWhereInput
+  instances_every: ChoreInstanceWhereInput
+  instances_some: ChoreInstanceWhereInput
+  instances_none: ChoreInstanceWhereInput
+  household: HouseholdWhereInput
+}
+
+input ChoreTemplateWhereUniqueInput {
   id: ID
 }
 
 scalar DateTime
+
+type Debt implements Node {
+  id: ID!
+  from: ChoreInstance!
+  settled: DebtStatus!
+  debtor: User!
+  creditor: User!
+  amount: Float!
+  amountPaid: Float!
+  household: Household!
+}
+
+"""A connection to a list of items."""
+type DebtConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [DebtEdge]!
+  aggregate: AggregateDebt!
+}
+
+input DebtCreateInput {
+  id: ID
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+  from: ChoreInstanceCreateOneWithoutDebtsInput!
+  debtor: UserCreateOneWithoutDebtsInput!
+  creditor: UserCreateOneWithoutCreditsInput!
+  household: HouseholdCreateOneWithoutDebtsInput!
+}
+
+input DebtCreateManyWithoutCreditorInput {
+  create: [DebtCreateWithoutCreditorInput!]
+  connect: [DebtWhereUniqueInput!]
+}
+
+input DebtCreateManyWithoutDebtorInput {
+  create: [DebtCreateWithoutDebtorInput!]
+  connect: [DebtWhereUniqueInput!]
+}
+
+input DebtCreateManyWithoutFromInput {
+  create: [DebtCreateWithoutFromInput!]
+  connect: [DebtWhereUniqueInput!]
+}
+
+input DebtCreateManyWithoutHouseholdInput {
+  create: [DebtCreateWithoutHouseholdInput!]
+  connect: [DebtWhereUniqueInput!]
+}
+
+input DebtCreateWithoutCreditorInput {
+  id: ID
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+  from: ChoreInstanceCreateOneWithoutDebtsInput!
+  debtor: UserCreateOneWithoutDebtsInput!
+  household: HouseholdCreateOneWithoutDebtsInput!
+}
+
+input DebtCreateWithoutDebtorInput {
+  id: ID
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+  from: ChoreInstanceCreateOneWithoutDebtsInput!
+  creditor: UserCreateOneWithoutCreditsInput!
+  household: HouseholdCreateOneWithoutDebtsInput!
+}
+
+input DebtCreateWithoutFromInput {
+  id: ID
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+  debtor: UserCreateOneWithoutDebtsInput!
+  creditor: UserCreateOneWithoutCreditsInput!
+  household: HouseholdCreateOneWithoutDebtsInput!
+}
+
+input DebtCreateWithoutHouseholdInput {
+  id: ID
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+  from: ChoreInstanceCreateOneWithoutDebtsInput!
+  debtor: UserCreateOneWithoutDebtsInput!
+  creditor: UserCreateOneWithoutCreditsInput!
+}
+
+"""An edge in a connection."""
+type DebtEdge {
+  """The item at the end of the edge."""
+  node: Debt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum DebtOrderByInput {
+  id_ASC
+  id_DESC
+  settled_ASC
+  settled_DESC
+  amount_ASC
+  amount_DESC
+  amountPaid_ASC
+  amountPaid_DESC
+}
+
+type DebtPreviousValues {
+  id: ID!
+  settled: DebtStatus!
+  amount: Float!
+  amountPaid: Float!
+}
+
+input DebtScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DebtScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DebtScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DebtScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  settled: DebtStatus
+
+  """All values that are not equal to given value."""
+  settled_not: DebtStatus
+
+  """All values that are contained in given list."""
+  settled_in: [DebtStatus!]
+
+  """All values that are not contained in given list."""
+  settled_not_in: [DebtStatus!]
+  amount: Float
+
+  """All values that are not equal to given value."""
+  amount_not: Float
+
+  """All values that are contained in given list."""
+  amount_in: [Float!]
+
+  """All values that are not contained in given list."""
+  amount_not_in: [Float!]
+
+  """All values less than the given value."""
+  amount_lt: Float
+
+  """All values less than or equal the given value."""
+  amount_lte: Float
+
+  """All values greater than the given value."""
+  amount_gt: Float
+
+  """All values greater than or equal the given value."""
+  amount_gte: Float
+  amountPaid: Float
+
+  """All values that are not equal to given value."""
+  amountPaid_not: Float
+
+  """All values that are contained in given list."""
+  amountPaid_in: [Float!]
+
+  """All values that are not contained in given list."""
+  amountPaid_not_in: [Float!]
+
+  """All values less than the given value."""
+  amountPaid_lt: Float
+
+  """All values less than or equal the given value."""
+  amountPaid_lte: Float
+
+  """All values greater than the given value."""
+  amountPaid_gt: Float
+
+  """All values greater than or equal the given value."""
+  amountPaid_gte: Float
+}
+
+enum DebtStatus {
+  UNPAID
+  PAID
+  PARTIAL
+  CANCELLED
+  OVERPAID
+}
+
+type DebtSubscriptionPayload {
+  mutation: MutationType!
+  node: Debt
+  updatedFields: [String!]
+  previousValues: DebtPreviousValues
+}
+
+input DebtSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DebtSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DebtSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DebtSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: DebtWhereInput
+}
+
+input DebtUpdateInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+  from: ChoreInstanceUpdateOneRequiredWithoutDebtsInput
+  debtor: UserUpdateOneRequiredWithoutDebtsInput
+  creditor: UserUpdateOneRequiredWithoutCreditsInput
+  household: HouseholdUpdateOneRequiredWithoutDebtsInput
+}
+
+input DebtUpdateManyDataInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+}
+
+input DebtUpdateManyMutationInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+}
+
+input DebtUpdateManyWithoutCreditorInput {
+  create: [DebtCreateWithoutCreditorInput!]
+  connect: [DebtWhereUniqueInput!]
+  set: [DebtWhereUniqueInput!]
+  disconnect: [DebtWhereUniqueInput!]
+  delete: [DebtWhereUniqueInput!]
+  update: [DebtUpdateWithWhereUniqueWithoutCreditorInput!]
+  updateMany: [DebtUpdateManyWithWhereNestedInput!]
+  deleteMany: [DebtScalarWhereInput!]
+  upsert: [DebtUpsertWithWhereUniqueWithoutCreditorInput!]
+}
+
+input DebtUpdateManyWithoutDebtorInput {
+  create: [DebtCreateWithoutDebtorInput!]
+  connect: [DebtWhereUniqueInput!]
+  set: [DebtWhereUniqueInput!]
+  disconnect: [DebtWhereUniqueInput!]
+  delete: [DebtWhereUniqueInput!]
+  update: [DebtUpdateWithWhereUniqueWithoutDebtorInput!]
+  updateMany: [DebtUpdateManyWithWhereNestedInput!]
+  deleteMany: [DebtScalarWhereInput!]
+  upsert: [DebtUpsertWithWhereUniqueWithoutDebtorInput!]
+}
+
+input DebtUpdateManyWithoutFromInput {
+  create: [DebtCreateWithoutFromInput!]
+  connect: [DebtWhereUniqueInput!]
+  set: [DebtWhereUniqueInput!]
+  disconnect: [DebtWhereUniqueInput!]
+  delete: [DebtWhereUniqueInput!]
+  update: [DebtUpdateWithWhereUniqueWithoutFromInput!]
+  updateMany: [DebtUpdateManyWithWhereNestedInput!]
+  deleteMany: [DebtScalarWhereInput!]
+  upsert: [DebtUpsertWithWhereUniqueWithoutFromInput!]
+}
+
+input DebtUpdateManyWithoutHouseholdInput {
+  create: [DebtCreateWithoutHouseholdInput!]
+  connect: [DebtWhereUniqueInput!]
+  set: [DebtWhereUniqueInput!]
+  disconnect: [DebtWhereUniqueInput!]
+  delete: [DebtWhereUniqueInput!]
+  update: [DebtUpdateWithWhereUniqueWithoutHouseholdInput!]
+  updateMany: [DebtUpdateManyWithWhereNestedInput!]
+  deleteMany: [DebtScalarWhereInput!]
+  upsert: [DebtUpsertWithWhereUniqueWithoutHouseholdInput!]
+}
+
+input DebtUpdateManyWithWhereNestedInput {
+  where: DebtScalarWhereInput!
+  data: DebtUpdateManyDataInput!
+}
+
+input DebtUpdateWithoutCreditorDataInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+  from: ChoreInstanceUpdateOneRequiredWithoutDebtsInput
+  debtor: UserUpdateOneRequiredWithoutDebtsInput
+  household: HouseholdUpdateOneRequiredWithoutDebtsInput
+}
+
+input DebtUpdateWithoutDebtorDataInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+  from: ChoreInstanceUpdateOneRequiredWithoutDebtsInput
+  creditor: UserUpdateOneRequiredWithoutCreditsInput
+  household: HouseholdUpdateOneRequiredWithoutDebtsInput
+}
+
+input DebtUpdateWithoutFromDataInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+  debtor: UserUpdateOneRequiredWithoutDebtsInput
+  creditor: UserUpdateOneRequiredWithoutCreditsInput
+  household: HouseholdUpdateOneRequiredWithoutDebtsInput
+}
+
+input DebtUpdateWithoutHouseholdDataInput {
+  settled: DebtStatus
+  amount: Float
+  amountPaid: Float
+  from: ChoreInstanceUpdateOneRequiredWithoutDebtsInput
+  debtor: UserUpdateOneRequiredWithoutDebtsInput
+  creditor: UserUpdateOneRequiredWithoutCreditsInput
+}
+
+input DebtUpdateWithWhereUniqueWithoutCreditorInput {
+  where: DebtWhereUniqueInput!
+  data: DebtUpdateWithoutCreditorDataInput!
+}
+
+input DebtUpdateWithWhereUniqueWithoutDebtorInput {
+  where: DebtWhereUniqueInput!
+  data: DebtUpdateWithoutDebtorDataInput!
+}
+
+input DebtUpdateWithWhereUniqueWithoutFromInput {
+  where: DebtWhereUniqueInput!
+  data: DebtUpdateWithoutFromDataInput!
+}
+
+input DebtUpdateWithWhereUniqueWithoutHouseholdInput {
+  where: DebtWhereUniqueInput!
+  data: DebtUpdateWithoutHouseholdDataInput!
+}
+
+input DebtUpsertWithWhereUniqueWithoutCreditorInput {
+  where: DebtWhereUniqueInput!
+  update: DebtUpdateWithoutCreditorDataInput!
+  create: DebtCreateWithoutCreditorInput!
+}
+
+input DebtUpsertWithWhereUniqueWithoutDebtorInput {
+  where: DebtWhereUniqueInput!
+  update: DebtUpdateWithoutDebtorDataInput!
+  create: DebtCreateWithoutDebtorInput!
+}
+
+input DebtUpsertWithWhereUniqueWithoutFromInput {
+  where: DebtWhereUniqueInput!
+  update: DebtUpdateWithoutFromDataInput!
+  create: DebtCreateWithoutFromInput!
+}
+
+input DebtUpsertWithWhereUniqueWithoutHouseholdInput {
+  where: DebtWhereUniqueInput!
+  update: DebtUpdateWithoutHouseholdDataInput!
+  create: DebtCreateWithoutHouseholdInput!
+}
+
+input DebtWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DebtWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DebtWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DebtWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  settled: DebtStatus
+
+  """All values that are not equal to given value."""
+  settled_not: DebtStatus
+
+  """All values that are contained in given list."""
+  settled_in: [DebtStatus!]
+
+  """All values that are not contained in given list."""
+  settled_not_in: [DebtStatus!]
+  amount: Float
+
+  """All values that are not equal to given value."""
+  amount_not: Float
+
+  """All values that are contained in given list."""
+  amount_in: [Float!]
+
+  """All values that are not contained in given list."""
+  amount_not_in: [Float!]
+
+  """All values less than the given value."""
+  amount_lt: Float
+
+  """All values less than or equal the given value."""
+  amount_lte: Float
+
+  """All values greater than the given value."""
+  amount_gt: Float
+
+  """All values greater than or equal the given value."""
+  amount_gte: Float
+  amountPaid: Float
+
+  """All values that are not equal to given value."""
+  amountPaid_not: Float
+
+  """All values that are contained in given list."""
+  amountPaid_in: [Float!]
+
+  """All values that are not contained in given list."""
+  amountPaid_not_in: [Float!]
+
+  """All values less than the given value."""
+  amountPaid_lt: Float
+
+  """All values less than or equal the given value."""
+  amountPaid_lte: Float
+
+  """All values greater than the given value."""
+  amountPaid_gt: Float
+
+  """All values greater than or equal the given value."""
+  amountPaid_gte: Float
+  from: ChoreInstanceWhereInput
+  debtor: UserWhereInput
+  creditor: UserWhereInput
+  household: HouseholdWhereInput
+}
+
+input DebtWhereUniqueInput {
+  id: ID
+}
 
 type Household implements Node {
   id: ID!
   name: String!
   houseMembers(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   headsOfHouse(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  choreTemplates(where: ChoreTemplateWhereInput, orderBy: ChoreTemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreTemplate!]
+  choreInstances(where: ChoreInstanceWhereInput, orderBy: ChoreInstanceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreInstance!]
+  debts(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Debt!]
 }
 
 """A connection to a list of items."""
@@ -1102,6 +1886,9 @@ input HouseholdCreateInput {
   name: String!
   houseMembers: UserCreateManyWithoutHouseholdsInput
   headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateCreateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceCreateManyWithoutHouseholdInput
+  debts: DebtCreateManyWithoutHouseholdInput
 }
 
 input HouseholdCreateManyWithoutHeadsOfHouseInput {
@@ -1119,16 +1906,64 @@ input HouseholdCreateOneInput {
   connect: HouseholdWhereUniqueInput
 }
 
+input HouseholdCreateOneWithoutChoreInstancesInput {
+  create: HouseholdCreateWithoutChoreInstancesInput
+  connect: HouseholdWhereUniqueInput
+}
+
+input HouseholdCreateOneWithoutChoreTemplatesInput {
+  create: HouseholdCreateWithoutChoreTemplatesInput
+  connect: HouseholdWhereUniqueInput
+}
+
+input HouseholdCreateOneWithoutDebtsInput {
+  create: HouseholdCreateWithoutDebtsInput
+  connect: HouseholdWhereUniqueInput
+}
+
+input HouseholdCreateWithoutChoreInstancesInput {
+  id: ID
+  name: String!
+  houseMembers: UserCreateManyWithoutHouseholdsInput
+  headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateCreateManyWithoutHouseholdInput
+  debts: DebtCreateManyWithoutHouseholdInput
+}
+
+input HouseholdCreateWithoutChoreTemplatesInput {
+  id: ID
+  name: String!
+  houseMembers: UserCreateManyWithoutHouseholdsInput
+  headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+  choreInstances: ChoreInstanceCreateManyWithoutHouseholdInput
+  debts: DebtCreateManyWithoutHouseholdInput
+}
+
+input HouseholdCreateWithoutDebtsInput {
+  id: ID
+  name: String!
+  houseMembers: UserCreateManyWithoutHouseholdsInput
+  headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateCreateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceCreateManyWithoutHouseholdInput
+}
+
 input HouseholdCreateWithoutHeadsOfHouseInput {
   id: ID
   name: String!
   houseMembers: UserCreateManyWithoutHouseholdsInput
+  choreTemplates: ChoreTemplateCreateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceCreateManyWithoutHouseholdInput
+  debts: DebtCreateManyWithoutHouseholdInput
 }
 
 input HouseholdCreateWithoutHouseMembersInput {
   id: ID
   name: String!
   headsOfHouse: UserCreateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateCreateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceCreateManyWithoutHouseholdInput
+  debts: DebtCreateManyWithoutHouseholdInput
 }
 
 """An edge in a connection."""
@@ -1145,10 +1980,6 @@ enum HouseholdOrderByInput {
   id_DESC
   name_ASC
   name_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type HouseholdPreviousValues {
@@ -1290,12 +2121,18 @@ input HouseholdUpdateDataInput {
   name: String
   houseMembers: UserUpdateManyWithoutHouseholdsInput
   headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
 }
 
 input HouseholdUpdateInput {
   name: String
   houseMembers: UserUpdateManyWithoutHouseholdsInput
   headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
 }
 
 input HouseholdUpdateManyDataInput {
@@ -1342,14 +2179,65 @@ input HouseholdUpdateOneRequiredInput {
   upsert: HouseholdUpsertNestedInput
 }
 
+input HouseholdUpdateOneRequiredWithoutChoreInstancesInput {
+  create: HouseholdCreateWithoutChoreInstancesInput
+  connect: HouseholdWhereUniqueInput
+  update: HouseholdUpdateWithoutChoreInstancesDataInput
+  upsert: HouseholdUpsertWithoutChoreInstancesInput
+}
+
+input HouseholdUpdateOneRequiredWithoutChoreTemplatesInput {
+  create: HouseholdCreateWithoutChoreTemplatesInput
+  connect: HouseholdWhereUniqueInput
+  update: HouseholdUpdateWithoutChoreTemplatesDataInput
+  upsert: HouseholdUpsertWithoutChoreTemplatesInput
+}
+
+input HouseholdUpdateOneRequiredWithoutDebtsInput {
+  create: HouseholdCreateWithoutDebtsInput
+  connect: HouseholdWhereUniqueInput
+  update: HouseholdUpdateWithoutDebtsDataInput
+  upsert: HouseholdUpsertWithoutDebtsInput
+}
+
+input HouseholdUpdateWithoutChoreInstancesDataInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
+}
+
+input HouseholdUpdateWithoutChoreTemplatesDataInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
+}
+
+input HouseholdUpdateWithoutDebtsDataInput {
+  name: String
+  houseMembers: UserUpdateManyWithoutHouseholdsInput
+  headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+}
+
 input HouseholdUpdateWithoutHeadsOfHouseDataInput {
   name: String
   houseMembers: UserUpdateManyWithoutHouseholdsInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
 }
 
 input HouseholdUpdateWithoutHouseMembersDataInput {
   name: String
   headsOfHouse: UserUpdateManyWithoutHouseholdsManagedInput
+  choreTemplates: ChoreTemplateUpdateManyWithoutHouseholdInput
+  choreInstances: ChoreInstanceUpdateManyWithoutHouseholdInput
+  debts: DebtUpdateManyWithoutHouseholdInput
 }
 
 input HouseholdUpdateWithWhereUniqueWithoutHeadsOfHouseInput {
@@ -1365,6 +2253,21 @@ input HouseholdUpdateWithWhereUniqueWithoutHouseMembersInput {
 input HouseholdUpsertNestedInput {
   update: HouseholdUpdateDataInput!
   create: HouseholdCreateInput!
+}
+
+input HouseholdUpsertWithoutChoreInstancesInput {
+  update: HouseholdUpdateWithoutChoreInstancesDataInput!
+  create: HouseholdCreateWithoutChoreInstancesInput!
+}
+
+input HouseholdUpsertWithoutChoreTemplatesInput {
+  update: HouseholdUpdateWithoutChoreTemplatesDataInput!
+  create: HouseholdCreateWithoutChoreTemplatesInput!
+}
+
+input HouseholdUpsertWithoutDebtsInput {
+  update: HouseholdUpdateWithoutDebtsDataInput!
+  create: HouseholdCreateWithoutDebtsInput!
 }
 
 input HouseholdUpsertWithWhereUniqueWithoutHeadsOfHouseInput {
@@ -1474,6 +2377,15 @@ input HouseholdWhereInput {
   headsOfHouse_every: UserWhereInput
   headsOfHouse_some: UserWhereInput
   headsOfHouse_none: UserWhereInput
+  choreTemplates_every: ChoreTemplateWhereInput
+  choreTemplates_some: ChoreTemplateWhereInput
+  choreTemplates_none: ChoreTemplateWhereInput
+  choreInstances_every: ChoreInstanceWhereInput
+  choreInstances_some: ChoreInstanceWhereInput
+  choreInstances_none: ChoreInstanceWhereInput
+  debts_every: DebtWhereInput
+  debts_some: DebtWhereInput
+  debts_none: DebtWhereInput
 }
 
 input HouseholdWhereUniqueInput {
@@ -1534,10 +2446,6 @@ enum InviteOrderByInput {
   inviteToken_DESC
   inviteTokenExpiry_ASC
   inviteTokenExpiry_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type InvitePreviousValues {
@@ -1794,27 +2702,39 @@ scalar Long
 
 type Mutation {
   createInvite(data: InviteCreateInput!): Invite!
-  createChore(data: ChoreCreateInput!): Chore!
+  createChoreTemplate(data: ChoreTemplateCreateInput!): ChoreTemplate!
+  createChoreInstance(data: ChoreInstanceCreateInput!): ChoreInstance!
+  createDebt(data: DebtCreateInput!): Debt!
   createUser(data: UserCreateInput!): User!
   createHousehold(data: HouseholdCreateInput!): Household!
   updateInvite(data: InviteUpdateInput!, where: InviteWhereUniqueInput!): Invite
-  updateChore(data: ChoreUpdateInput!, where: ChoreWhereUniqueInput!): Chore
+  updateChoreTemplate(data: ChoreTemplateUpdateInput!, where: ChoreTemplateWhereUniqueInput!): ChoreTemplate
+  updateChoreInstance(data: ChoreInstanceUpdateInput!, where: ChoreInstanceWhereUniqueInput!): ChoreInstance
+  updateDebt(data: DebtUpdateInput!, where: DebtWhereUniqueInput!): Debt
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateHousehold(data: HouseholdUpdateInput!, where: HouseholdWhereUniqueInput!): Household
   deleteInvite(where: InviteWhereUniqueInput!): Invite
-  deleteChore(where: ChoreWhereUniqueInput!): Chore
+  deleteChoreTemplate(where: ChoreTemplateWhereUniqueInput!): ChoreTemplate
+  deleteChoreInstance(where: ChoreInstanceWhereUniqueInput!): ChoreInstance
+  deleteDebt(where: DebtWhereUniqueInput!): Debt
   deleteUser(where: UserWhereUniqueInput!): User
   deleteHousehold(where: HouseholdWhereUniqueInput!): Household
   upsertInvite(where: InviteWhereUniqueInput!, create: InviteCreateInput!, update: InviteUpdateInput!): Invite!
-  upsertChore(where: ChoreWhereUniqueInput!, create: ChoreCreateInput!, update: ChoreUpdateInput!): Chore!
+  upsertChoreTemplate(where: ChoreTemplateWhereUniqueInput!, create: ChoreTemplateCreateInput!, update: ChoreTemplateUpdateInput!): ChoreTemplate!
+  upsertChoreInstance(where: ChoreInstanceWhereUniqueInput!, create: ChoreInstanceCreateInput!, update: ChoreInstanceUpdateInput!): ChoreInstance!
+  upsertDebt(where: DebtWhereUniqueInput!, create: DebtCreateInput!, update: DebtUpdateInput!): Debt!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertHousehold(where: HouseholdWhereUniqueInput!, create: HouseholdCreateInput!, update: HouseholdUpdateInput!): Household!
   updateManyInvites(data: InviteUpdateManyMutationInput!, where: InviteWhereInput): BatchPayload!
-  updateManyChores(data: ChoreUpdateManyMutationInput!, where: ChoreWhereInput): BatchPayload!
+  updateManyChoreTemplates(data: ChoreTemplateUpdateManyMutationInput!, where: ChoreTemplateWhereInput): BatchPayload!
+  updateManyChoreInstances(data: ChoreInstanceUpdateManyMutationInput!, where: ChoreInstanceWhereInput): BatchPayload!
+  updateManyDebts(data: DebtUpdateManyMutationInput!, where: DebtWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyHouseholds(data: HouseholdUpdateManyMutationInput!, where: HouseholdWhereInput): BatchPayload!
   deleteManyInvites(where: InviteWhereInput): BatchPayload!
-  deleteManyChores(where: ChoreWhereInput): BatchPayload!
+  deleteManyChoreTemplates(where: ChoreTemplateWhereInput): BatchPayload!
+  deleteManyChoreInstances(where: ChoreInstanceWhereInput): BatchPayload!
+  deleteManyDebts(where: DebtWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyHouseholds(where: HouseholdWhereInput): BatchPayload!
 }
@@ -1855,15 +2775,21 @@ enum Permissions {
 
 type Query {
   invites(where: InviteWhereInput, orderBy: InviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Invite]!
-  chores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore]!
+  choreTemplates(where: ChoreTemplateWhereInput, orderBy: ChoreTemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreTemplate]!
+  choreInstances(where: ChoreInstanceWhereInput, orderBy: ChoreInstanceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreInstance]!
+  debts(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Debt]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   households(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household]!
   invite(where: InviteWhereUniqueInput!): Invite
-  chore(where: ChoreWhereUniqueInput!): Chore
+  choreTemplate(where: ChoreTemplateWhereUniqueInput!): ChoreTemplate
+  choreInstance(where: ChoreInstanceWhereUniqueInput!): ChoreInstance
+  debt(where: DebtWhereUniqueInput!): Debt
   user(where: UserWhereUniqueInput!): User
   household(where: HouseholdWhereUniqueInput!): Household
   invitesConnection(where: InviteWhereInput, orderBy: InviteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InviteConnection!
-  choresConnection(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreConnection!
+  choreTemplatesConnection(where: ChoreTemplateWhereInput, orderBy: ChoreTemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreTemplateConnection!
+  choreInstancesConnection(where: ChoreInstanceWhereInput, orderBy: ChoreInstanceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChoreInstanceConnection!
+  debtsConnection(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DebtConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   householdsConnection(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HouseholdConnection!
 
@@ -1876,7 +2802,9 @@ type Query {
 
 type Subscription {
   invite(where: InviteSubscriptionWhereInput): InviteSubscriptionPayload
-  chore(where: ChoreSubscriptionWhereInput): ChoreSubscriptionPayload
+  choreTemplate(where: ChoreTemplateSubscriptionWhereInput): ChoreTemplateSubscriptionPayload
+  choreInstance(where: ChoreInstanceSubscriptionWhereInput): ChoreInstanceSubscriptionPayload
+  debt(where: DebtSubscriptionWhereInput): DebtSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   household(where: HouseholdSubscriptionWhereInput): HouseholdSubscriptionPayload
 }
@@ -1889,11 +2817,12 @@ type User implements Node {
   resetToken: String
   resetTokenExpiry: Float
   permissions: [Permissions!]!
-  createdChores(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
-  assigned(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
-  currentAssigned(where: ChoreWhereInput, orderBy: ChoreOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chore!]
+  createdChores(where: ChoreTemplateWhereInput, orderBy: ChoreTemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreTemplate!]
+  currentAssigned(where: ChoreInstanceWhereInput, orderBy: ChoreInstanceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ChoreInstance!]
   households(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household!]
   householdsManaged(where: HouseholdWhereInput, orderBy: HouseholdOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Household!]
+  debts(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Debt!]
+  credits(where: DebtWhereInput, orderBy: DebtOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Debt!]
 }
 
 """A connection to a list of items."""
@@ -1914,16 +2843,12 @@ input UserCreateInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  createdChores: ChoreCreateManyWithoutCreatedByInput
-  assigned: ChoreCreateManyWithoutAssignedInput
-  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
   households: HouseholdCreateManyWithoutHouseMembersInput
   householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
-}
-
-input UserCreateManyWithoutAssignedInput {
-  create: [UserCreateWithoutAssignedInput!]
-  connect: [UserWhereUniqueInput!]
+  debts: DebtCreateManyWithoutDebtorInput
+  credits: DebtCreateManyWithoutCreditorInput
 }
 
 input UserCreateManyWithoutCurrentAssignedInput {
@@ -1951,22 +2876,18 @@ input UserCreateOneWithoutCreatedChoresInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreatepermissionsInput {
-  set: [Permissions!]
+input UserCreateOneWithoutCreditsInput {
+  create: UserCreateWithoutCreditsInput
+  connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutAssignedInput {
-  id: ID
-  name: String!
-  email: String!
-  password: String!
-  resetToken: String
-  resetTokenExpiry: Float
-  permissions: UserCreatepermissionsInput
-  createdChores: ChoreCreateManyWithoutCreatedByInput
-  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
-  households: HouseholdCreateManyWithoutHouseMembersInput
-  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+input UserCreateOneWithoutDebtsInput {
+  create: UserCreateWithoutDebtsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreatepermissionsInput {
+  set: [Permissions!]
 }
 
 input UserCreateWithoutCreatedChoresInput {
@@ -1977,10 +2898,26 @@ input UserCreateWithoutCreatedChoresInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  assigned: ChoreCreateManyWithoutAssignedInput
-  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
   households: HouseholdCreateManyWithoutHouseMembersInput
   householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+  debts: DebtCreateManyWithoutDebtorInput
+  credits: DebtCreateManyWithoutCreditorInput
+}
+
+input UserCreateWithoutCreditsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+  debts: DebtCreateManyWithoutDebtorInput
 }
 
 input UserCreateWithoutCurrentAssignedInput {
@@ -1991,10 +2928,26 @@ input UserCreateWithoutCurrentAssignedInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  createdChores: ChoreCreateManyWithoutCreatedByInput
-  assigned: ChoreCreateManyWithoutAssignedInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
   households: HouseholdCreateManyWithoutHouseMembersInput
   householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+  debts: DebtCreateManyWithoutDebtorInput
+  credits: DebtCreateManyWithoutCreditorInput
+}
+
+input UserCreateWithoutDebtsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
+  households: HouseholdCreateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+  credits: DebtCreateManyWithoutCreditorInput
 }
 
 input UserCreateWithoutHouseholdsInput {
@@ -2005,10 +2958,11 @@ input UserCreateWithoutHouseholdsInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  createdChores: ChoreCreateManyWithoutCreatedByInput
-  assigned: ChoreCreateManyWithoutAssignedInput
-  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
   householdsManaged: HouseholdCreateManyWithoutHeadsOfHouseInput
+  debts: DebtCreateManyWithoutDebtorInput
+  credits: DebtCreateManyWithoutCreditorInput
 }
 
 input UserCreateWithoutHouseholdsManagedInput {
@@ -2019,10 +2973,11 @@ input UserCreateWithoutHouseholdsManagedInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  createdChores: ChoreCreateManyWithoutCreatedByInput
-  assigned: ChoreCreateManyWithoutAssignedInput
-  currentAssigned: ChoreCreateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateCreateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceCreateManyWithoutCurrentAssignedInput
   households: HouseholdCreateManyWithoutHouseMembersInput
+  debts: DebtCreateManyWithoutDebtorInput
+  credits: DebtCreateManyWithoutCreditorInput
 }
 
 """An edge in a connection."""
@@ -2047,10 +3002,6 @@ enum UserOrderByInput {
   resetToken_DESC
   resetTokenExpiry_ASC
   resetTokenExpiry_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type UserPreviousValues {
@@ -2342,11 +3293,12 @@ input UserUpdateDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
   households: HouseholdUpdateManyWithoutHouseMembersInput
   householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
 }
 
 input UserUpdateInput {
@@ -2356,11 +3308,12 @@ input UserUpdateInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
   households: HouseholdUpdateManyWithoutHouseMembersInput
   householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
 }
 
 input UserUpdateManyDataInput {
@@ -2379,18 +3332,6 @@ input UserUpdateManyMutationInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-}
-
-input UserUpdateManyWithoutAssignedInput {
-  create: [UserCreateWithoutAssignedInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  delete: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueWithoutAssignedInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-  deleteMany: [UserScalarWhereInput!]
-  upsert: [UserUpsertWithWhereUniqueWithoutAssignedInput!]
 }
 
 input UserUpdateManyWithoutCurrentAssignedInput {
@@ -2448,21 +3389,22 @@ input UserUpdateOneRequiredWithoutCreatedChoresInput {
   upsert: UserUpsertWithoutCreatedChoresInput
 }
 
-input UserUpdatepermissionsInput {
-  set: [Permissions!]
+input UserUpdateOneRequiredWithoutCreditsInput {
+  create: UserCreateWithoutCreditsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutCreditsDataInput
+  upsert: UserUpsertWithoutCreditsInput
 }
 
-input UserUpdateWithoutAssignedDataInput {
-  name: String
-  email: String
-  password: String
-  resetToken: String
-  resetTokenExpiry: Float
-  permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
-  households: HouseholdUpdateManyWithoutHouseMembersInput
-  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+input UserUpdateOneRequiredWithoutDebtsInput {
+  create: UserCreateWithoutDebtsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutDebtsDataInput
+  upsert: UserUpsertWithoutDebtsInput
+}
+
+input UserUpdatepermissionsInput {
+  set: [Permissions!]
 }
 
 input UserUpdateWithoutCreatedChoresDataInput {
@@ -2472,10 +3414,25 @@ input UserUpdateWithoutCreatedChoresDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
   households: HouseholdUpdateManyWithoutHouseMembersInput
   householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
+}
+
+input UserUpdateWithoutCreditsDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
 }
 
 input UserUpdateWithoutCurrentAssignedDataInput {
@@ -2485,10 +3442,25 @@ input UserUpdateWithoutCurrentAssignedDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
   households: HouseholdUpdateManyWithoutHouseMembersInput
   householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
+}
+
+input UserUpdateWithoutDebtsDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
+  households: HouseholdUpdateManyWithoutHouseMembersInput
+  householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  credits: DebtUpdateManyWithoutCreditorInput
 }
 
 input UserUpdateWithoutHouseholdsDataInput {
@@ -2498,10 +3470,11 @@ input UserUpdateWithoutHouseholdsDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
   householdsManaged: HouseholdUpdateManyWithoutHeadsOfHouseInput
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
 }
 
 input UserUpdateWithoutHouseholdsManagedDataInput {
@@ -2511,15 +3484,11 @@ input UserUpdateWithoutHouseholdsManagedDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  createdChores: ChoreUpdateManyWithoutCreatedByInput
-  assigned: ChoreUpdateManyWithoutAssignedInput
-  currentAssigned: ChoreUpdateManyWithoutCurrentAssignedInput
+  createdChores: ChoreTemplateUpdateManyWithoutCreatedByInput
+  currentAssigned: ChoreInstanceUpdateManyWithoutCurrentAssignedInput
   households: HouseholdUpdateManyWithoutHouseMembersInput
-}
-
-input UserUpdateWithWhereUniqueWithoutAssignedInput {
-  where: UserWhereUniqueInput!
-  data: UserUpdateWithoutAssignedDataInput!
+  debts: DebtUpdateManyWithoutDebtorInput
+  credits: DebtUpdateManyWithoutCreditorInput
 }
 
 input UserUpdateWithWhereUniqueWithoutCurrentAssignedInput {
@@ -2547,10 +3516,14 @@ input UserUpsertWithoutCreatedChoresInput {
   create: UserCreateWithoutCreatedChoresInput!
 }
 
-input UserUpsertWithWhereUniqueWithoutAssignedInput {
-  where: UserWhereUniqueInput!
-  update: UserUpdateWithoutAssignedDataInput!
-  create: UserCreateWithoutAssignedInput!
+input UserUpsertWithoutCreditsInput {
+  update: UserUpdateWithoutCreditsDataInput!
+  create: UserCreateWithoutCreditsInput!
+}
+
+input UserUpsertWithoutDebtsInput {
+  update: UserUpdateWithoutDebtsDataInput!
+  create: UserCreateWithoutDebtsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutCurrentAssignedInput {
@@ -2802,21 +3775,24 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   resetTokenExpiry_gte: Float
-  createdChores_every: ChoreWhereInput
-  createdChores_some: ChoreWhereInput
-  createdChores_none: ChoreWhereInput
-  assigned_every: ChoreWhereInput
-  assigned_some: ChoreWhereInput
-  assigned_none: ChoreWhereInput
-  currentAssigned_every: ChoreWhereInput
-  currentAssigned_some: ChoreWhereInput
-  currentAssigned_none: ChoreWhereInput
+  createdChores_every: ChoreTemplateWhereInput
+  createdChores_some: ChoreTemplateWhereInput
+  createdChores_none: ChoreTemplateWhereInput
+  currentAssigned_every: ChoreInstanceWhereInput
+  currentAssigned_some: ChoreInstanceWhereInput
+  currentAssigned_none: ChoreInstanceWhereInput
   households_every: HouseholdWhereInput
   households_some: HouseholdWhereInput
   households_none: HouseholdWhereInput
   householdsManaged_every: HouseholdWhereInput
   householdsManaged_some: HouseholdWhereInput
   householdsManaged_none: HouseholdWhereInput
+  debts_every: DebtWhereInput
+  debts_some: DebtWhereInput
+  debts_none: DebtWhereInput
+  credits_every: DebtWhereInput
+  credits_some: DebtWhereInput
+  credits_none: DebtWhereInput
 }
 
 input UserWhereUniqueInput {

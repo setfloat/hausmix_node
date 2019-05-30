@@ -6,10 +6,7 @@ const db = require("./db");
 
 const server = createServer();
 
-// TODO Use express middleware to handle cookies (JWT)
 server.express.use(cookieParser());
-
-// TODO Use express middleware to populate current User
 
 server.express.use((req, res, next) => {
   const { token } = req.cookies;
@@ -27,11 +24,10 @@ server.express.use(async (req, res, next) => {
   const user = await db.query
     .user(
       { where: { id: req.userId } },
-      "{ id, permissions, email, name, households { id }, householdsManaged  { id }, createdChores  { id }, assigned  { id }, currentAssigned  { id } }"
+      "{ id, permissions, email, name, households { id }, householdsManaged  { id }, createdChores  { id }, currentAssigned  { id } }"
     )
     .catch(err => console.log(err));
 
-  console.log({ user });
   req.user = user;
   next();
 });

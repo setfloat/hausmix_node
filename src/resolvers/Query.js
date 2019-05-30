@@ -1,4 +1,4 @@
-const { forwardTo } = require("prisma-binding");
+const isAfter = require("date-fns/is_after");
 
 const Query = {
   loggedInUser(parent, args, ctx, info) {
@@ -13,13 +13,6 @@ const Query = {
     );
   },
   async invite(parent, args, ctx, info) {
-    // console.log({ inviteToken: args.inviteToken });
-    // if (!ctx.request.userId) {
-    //   throw new Error(
-    //     "TODO< Create a backend path for users to receive no invites"
-    //   );
-    // }
-
     const invite = await ctx.db.query.invites(
       {
         where: {
@@ -37,33 +30,93 @@ const Query = {
     return invite[0];
   },
 
-  async users(parent, args, ctx, info) {
-    if (!ctx.request.userId) {
-      throw new Error("You must be logged in to perform this action.");
-    }
-
-    // 2. Check if the user has the permissions to query all the users.
-    // hasPermission(ctx.request.user, ["ADMIN", "PERMISSIONUPDATE"]);
-
-    // 3. Query the users if permitted.
-    return ctx.db.query.users({}, info); // with the users method the first argument for where is left empty as we want to query all of the users. the second info argument includes the graphql query that contains the fields we are requesting from the front end.
-    // basically the where limits which rows are returned and the graphql query limits which columns are returned.
-  },
   async currentHousehold(parent, args, ctx, info) {
+    // Checks for newly overdue chores and updates them to OVERDUE if necessary.
     if (!ctx.request.userId) {
       throw new Error("You must be logged in to perform this action.");
     }
 
-    const household = await ctx.db.query.households(
+    function getHousehold(ctx, id, info) {
+      return ctx.db.query.households(
+        {
+          where: { id, houseMembers_some: { id: ctx.request.userId } }
+        },
+        info
+      );
+    }
+
+    let household = await getHousehold(ctx, args.id, info);
+    const overdueInstances = await household[0].choreInstances.filter(
+      instance => {
+        if (
+          isAfter(Date.now(), instance.deadline) &&
+          instance.completionStatus === "INCOMPLETE"
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    );
+
+    if (overdueInstances.length) {
+      const overIDs = await overdueInstances.map(instance => instance.id);
+      const updatedInstance = await ctx.db.mutation.updateManyChoreInstances({
+        where: { id_in: overIDs },
+        data: {
+          completionStatus: "OVERDUE"
+        }
+      });
+      household = await getHousehold(ctx, args.id, info);
+    }
+
+    return household[0];
+  },
+
+  async choreTemplate(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to perform this action.");
+    }
+
+    const choreTemplates = await ctx.db.query.choreTemplates(
       {
-        where: { id: args.id, houseMembers_some: { id: ctx.request.userId } }
+        where: {
+          id: args.id
+        }
       },
       info
     );
 
-    console.log(household);
+    return choreTemplates[0];
+  },
 
-    return household[0];
+  async houseSingleUserDebts(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to perform this action.");
+    }
+    const userId = ctx.request.userId;
+    const { householdId, specificUserId } = args;
+    const userDebts = await ctx.db.query.debts(
+      {
+        where: {
+          settled_in: ["UNPAID", "PARTIAL", "OVERPAID"],
+          household: { id: householdId },
+          debtor: {
+            id_in: [userId, specificUserId]
+          },
+          creditor: {
+            id_in: [userId, specificUserId]
+          }
+        }
+      },
+      info
+    );
+
+    if (!userDebts.length || userDebts === undefined) {
+      return null;
+    }
+
+    return userDebts;
   }
 };
 

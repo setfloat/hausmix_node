@@ -11,54 +11,99 @@ enum InviteStatus {
   ACCEPTED
 }
 
+enum ChoreFrequency {
+  Once
+  Daily
+  Weekly
+  Monthly
+  Quarterly
+  Yearly
+}
+
+enum ChoreCompleteStatus {
+  INCOMPLETE
+  COMPLETE
+  OVERDUE
+}
+
+enum DebtStatus {
+  UNPAID
+  PAID
+  PARTIAL
+  CANCELLED
+  OVERPAID
+}
+
 type User {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   email: String! @unique
   password: String!
   resetToken: String
   resetTokenExpiry: Float
-  permissions: [Permissions]
-  createdChores: [Chore]! @relation(name: "ChoreCreators")
-  assigned: [Chore] @relation(name: "Assigned")
-  currentAssigned: [Chore] @relation(name: "CurrentAssigned")
+  permissions: [Permissions] @scalarList(strategy: RELATION)
+  createdChores: [ChoreTemplate]!
+  currentAssigned: [ChoreInstance]!
   households: [Household]! @relation(name: "HouseMembers")
   householdsManaged: [Household]! @relation(name: "HeadsOfHouse")
+  debts: [Debt]! @relation(name: "Debtor")
+  credits: [Debt]! @relation(name: "Creditor")
 }
 
 type Household {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   houseMembers: [User]! @relation(name: "HouseMembers")
   headsOfHouse: [User]! @relation(name: "HeadsOfHouse")
+  choreTemplates: [ChoreTemplate]
+  choreInstances: [ChoreInstance]
+  debts: [Debt]
 }
 
 type Invite {
-  id: ID! @unique
+  id: ID! @id
   household: Household!
   invitedBy: User! @relation(name: "InvitedBy")
   invitedEmail: String!
-  # invitedUser: User @relation(name: "InvitedUser")
   invitedIsUser: Boolean!
   inviteStatus: InviteStatus!
   inviteToken: String @unique
   inviteTokenExpiry: Float
 }
 
-type Chore {
-  id: ID! @unique
+type ChoreTemplate {
+  id: ID! @id
   name: String!
-  createdBy: User! @relation(name: "ChoreCreators")
+  createdBy: User!
   description: String
-  choreStatus: String!
-  choreCost: Float
-  timeCost: Float
-  deadline: DateTime
-  repeating: Boolean
-  currentAssigned: [User] @relation(name: "CurrentAssigned")
-  assigned: [User] @relation(name: "Assigned")
-  peopleRequired: Float
-  rotationType: String
-  # pastCompletions: [User]
-  frequency: String
+  choreTemplateCost: Float
+  instances: [ChoreInstance]
+  household: Household!
+  frequency: ChoreFrequency
 }
+
+type ChoreInstance {
+  id: ID! @id
+  name: String!
+  currentAssigned: [User]!
+  startDate: DateTime
+  deadline: DateTime
+  instanceCost: Float
+  completionStatus: ChoreCompleteStatus
+  household: Household!
+  debts: [Debt]
+  choreTemplate: ChoreTemplate!
+}
+
+type Debt {
+  id: ID! @id
+  from: ChoreInstance!
+  settled: DebtStatus!
+  debtor: User! @relation(name: "Debtor")
+  creditor: User! @relation(name: "Creditor")
+  amount: Float!
+  amountPaid: Float!
+  household: Household!
+}
+# debtor is the slacker
+# creditor is the thief

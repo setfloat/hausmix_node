@@ -7,8 +7,19 @@ const {
   preventSendingTooManyEmails,
   checkIfEmailAlreadyInvitedToHousehold
 } = require("./mutations/createInvite");
+const {
+  createNewDebts,
+  choreInstancesToUpdateQuery,
+  updatedInstanceFunc,
+  overdueCreateInstanceFromRepeatingFunc
+} = require("./mutations/thievingMarkcomplete");
 
-const createInviteValidations = () => {};
+const {
+  updateChoreInstance,
+  markCompletechoreInstancesToUpdateQuery,
+  createInstanceFromRepeatingFunc
+} = require("./mutations/markcomplete");
+const Query = require("./Query");
 
 const createJWTAndCookie = (userId, ctx) => {
   const token = jwt.sign({ userId: userId }, process.env.APP_SECRET);
@@ -66,7 +77,6 @@ const Mutation = {
           households: [],
           householdsManaged: [],
           createdChores: [],
-          assigned: [],
           currentAssigned: []
         }
       },
@@ -85,12 +95,14 @@ const Mutation = {
         data: {
           headsOfHouse: { connect: { id: userId } },
           houseMembers: { connect: { id: userId } },
+          debts: [],
+          choreTemplates: [],
+          choreInstances: [],
           ...args
         }
       },
       info
     );
-    console.log({ successfulCreateHousehold: household });
 
     return household;
   },
@@ -106,11 +118,12 @@ const Mutation = {
     );
 
     if (invitedIsUser) {
-      // 1. Check if invitedEmail is part of current household OR is adding themself
+      // 1. Check if invitedEmail is part of current household
       if (invitedIsUser.households.includes(householdId)) {
         throw new Error("This person is already a member of your household!");
       }
-      // 2. User has already been invited to household.
+      // 2. User is part of a different household
+      throw new Error("Multiple households are not yet supported");
     }
 
     await checkIfEmailAlreadyInvitedToHousehold(ctx, invitedEmail, householdId);
@@ -179,7 +192,7 @@ const Mutation = {
           inviteTokenExpiry: Date.now()
         }
       },
-      `{ id household { id name } invitedBy { id name } invitedEmail invitedIsUser inviteStatus inviteToken inviteTokenExpiry }`
+      `{ id household { id name houseMembers { id } } invitedBy { id name } invitedEmail invitedIsUser inviteStatus inviteToken inviteTokenExpiry }`
     );
 
     delete args.inviteToken;
@@ -193,8 +206,9 @@ const Mutation = {
           households: { connect: { id: updatedInvite.household.id } },
           householdsManaged: [],
           createdChores: [],
-          assigned: [],
-          currentAssigned: []
+          currentAssigned: [],
+          debts: [],
+          credits: []
         }
       },
       info
@@ -205,23 +219,280 @@ const Mutation = {
     return user;
   },
 
-  async createChore(parent, args, ctx, info) {
-    // if (!ctx.request.userId) {
-    //     throw new Error("You must be logged in to perform this action.");
-    //   }
+  async createChoreTemplate(parent, args, ctx, info) {
+    const { userId } = ctx.request;
 
-    const chore = await ctx.db.mutation.createChore(
+    const choreTemplate = await ctx.db.mutation.createChoreTemplate(
       {
         data: {
-          createdBy: {
-            connect: {
-              id: ctx.request.userId
-            }
-          },
-          ...args
+          ...args,
+          household: { connect: { id: args.household } },
+          createdBy: { connect: { id: userId } },
+          instances: []
         }
       },
       info
+    );
+    return choreTemplate;
+  },
+
+  async createAssignChoreMutation(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+
+    const currentAssignedConnect = await args.currentAssigned.map(elem => ({
+      id: elem
+    }));
+
+    const choreInstance = await ctx.db.mutation.createChoreInstance(
+      {
+        data: {
+          ...args,
+          choreTemplate: { connect: { id: args.choreTemplate } },
+          household: { connect: { id: args.household } },
+          currentAssigned: { connect: currentAssignedConnect }
+        }
+      },
+      info
+    );
+
+    return choreInstance;
+  },
+
+  async markComplete(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+
+    const choreInstanceToUpdate = await markCompletechoreInstancesToUpdateQuery(
+      ctx,
+      args,
+      ctx.request.userId,
+      info
+    );
+
+    if (!choreInstanceToUpdate || !choreInstanceToUpdate.length) {
+      throw new Error("404");
+    }
+
+    const updatedChoreInstance = await updateChoreInstance(ctx, args);
+
+    if (updatedChoreInstance.choreTemplate.frequency !== "Once") {
+      const createInstanceFromRepeating = await createInstanceFromRepeatingFunc(
+        ctx,
+        updatedChoreInstance,
+        info
+      );
+      return createInstanceFromRepeating;
+    }
+
+    return updatedChoreInstance;
+  },
+
+  async thievingMarkComplete(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+    const { userId } = ctx.request;
+
+    const choreInstancesToUpdate = await choreInstancesToUpdateQuery(
+      ctx,
+      args,
+      userId
+    );
+
+    if (!choreInstancesToUpdate.length) {
+      throw new Error("This chore cannot be stolen at this time.");
+    }
+
+    // 1. create debt
+    const newDebts = await createNewDebts(
+      choreInstancesToUpdate[0],
+      ctx,
+      args,
+      userId
+    );
+
+    // 2. mark chore Complete
+    const updatedInstance = await updatedInstanceFunc(
+      ctx,
+      args.id,
+      userId,
+      info
+    );
+
+    // 3. Create new instance if the chore repeats itself
+    if (updatedInstance.choreTemplate.frequency !== "Once") {
+      const createInstanceFromRepeating = await overdueCreateInstanceFromRepeatingFunc(
+        ctx,
+        updatedInstance,
+        info
+      );
+
+      return createInstanceFromRepeating;
+    }
+
+    return updatedInstance;
+  },
+
+  async cancelDebt(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+    const { userId } = ctx.request;
+
+    const cancelledDebt = await ctx.db.mutation.updateManyDebts({
+      data: {
+        settled: "CANCELLED",
+        amountPaid: 0
+      },
+      where: {
+        settled_not: "CANCELLED",
+        id: args.id,
+        OR: [
+          { creditor: { id: userId } },
+          { debtor: { id: userId } },
+          { household: { headsOfHouse_some: { id: userId } } }
+        ]
+      }
+    });
+    if (cancelledDebt.count === 0) {
+      throw new Error("No debt found");
+    }
+    if (cancelledDebt) {
+      return { id: args.id };
+    } else {
+      throw new Error("Something didn't work right");
+    }
+  },
+
+  async settleDebt(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+    const { userId } = ctx.request;
+
+    const debtToSettle = await ctx.db.query.debt(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      `{ amount amountPaid settled }`
+    );
+
+    const settledDebt = await ctx.db.mutation.updateManyDebts({
+      data: {
+        settled: "PAID",
+        amountPaid: debtToSettle.amount
+      },
+      where: {
+        settled_in: ["UNPAID", "PARTIAL"],
+        id: args.id,
+        OR: [
+          { creditor: { id: userId } },
+          { debtor: { id: userId } },
+          { household: { headsOfHouse_some: { id: userId } } }
+        ]
+      }
+    });
+    if (settledDebt.count === 0) {
+      throw new Error("No debt found");
+    }
+    if (settledDebt) {
+      return { id: args.id };
+    } else {
+      throw new Error("Something Error. Please Try again later.");
+    }
+  },
+
+  async unpayDebt(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in to complete this action");
+    }
+    const { userId } = ctx.request;
+
+    const cancelledDebt = await ctx.db.mutation.updateManyDebts({
+      data: {
+        settled: "UNPAID"
+      },
+      where: {
+        settled_not: "UNPAID",
+        id: args.id,
+        OR: [
+          { creditor: { id: userId } },
+          { debtor: { id: userId } },
+          { household: { headsOfHouse_some: { id: userId } } }
+        ]
+      }
+    });
+    if (cancelledDebt.count === 0) {
+      throw new Error("No debt found");
+    }
+    if (cancelledDebt) {
+      return { id: args.id };
+    } else {
+      throw new Error("Something didn't work right");
+    }
+  },
+
+  async settleAllDebts(parent, args, ctx, info) {
+    const { householdId, specificUserId, totalPayment } = args;
+
+    const userDebts = await Query.houseSingleUserDebts(
+      parent,
+      args,
+      ctx,
+      `{
+        id
+        amount
+        amountPaid
+        debtor {
+          id
+          name
+        }
+        creditor {
+          id
+          name
+        }
+      }`
+    );
+
+    // add debts and compare added debts to totalPayment to ensure equality.
+    const totalDebts = await userDebts.reduce(
+      (accumulator, debt, index, arr) => {
+        if (debt.debtor.id === specificUserId) {
+          return accumulator + debt.amount;
+        } else {
+          return accumulator - debt.amount;
+        }
+      },
+      0
+    );
+
+    // Ensure client and server are in sync.
+    if (totalDebts !== totalPayment) {
+      throw new Error("Total debts do not match total payments.");
+    }
+
+    // sort debts so credits are first in the array. In the future, this will allow for partial payments.
+    const sortedDebts = await userDebts.sort((a, b) => a.amount - b.amount);
+
+    return await Promise.all(
+      sortedDebts.map(async debtToPay => {
+        const updatedDebt = await ctx.db.mutation.updateDebt({
+          where: {
+            id: debtToPay.id
+          },
+          data: {
+            amountPaid: debtToPay.amount,
+            settled: "PAID"
+          }
+        });
+
+        return updatedDebt;
+      })
     );
   }
 };

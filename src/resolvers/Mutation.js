@@ -26,6 +26,7 @@ const createJWTAndCookie = (userId, ctx) => {
 
   ctx.response.cookie("token", token, {
     httpOnly: true,
+    sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year cookie
   });
 };
@@ -64,6 +65,16 @@ const Mutation = {
 
   async signUp(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
+
+    if (args.password.length < 10) {
+      throw new Error("Invalid password");
+    }
+    if (args.email.length < 8 || args.email.indexOf("@") === -1) {
+      throw new Error("Invalid Email");
+    }
+    if (args.name.length < 2) {
+      throw new Error("Invalid Name");
+    }
 
     const password = await bcrypt.hash(args.password, 14);
     delete args.password;

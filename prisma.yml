@@ -1,5 +1,6 @@
-endpoint: ${env:PRISMA_ENDPOINT}
+# endpoint: ${env:PRISMA_ENDPOINT}
 # endpoint: https://hausmix-production-306b2d1567.herokuapp.com/hausmix-prod/prod
+endpoint: http://api.hausmix.com
 datamodel: datamodel.prisma
 # secret: ${env:PRISMA_SECRET}
 hooks:

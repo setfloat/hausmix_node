@@ -26,7 +26,7 @@ const createJWTAndCookie = (userId, ctx) => {
 
   ctx.response.cookie("token", token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "Lax",
     maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year cookie
   });
 };

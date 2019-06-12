@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/patrick-richardson-01c5e7/hausmix/dev
-# timestamp: Mon May 27 2019 16:18:31 GMT-0700 (Pacific Daylight Time)
+# timestamp: Tue Jun 11 2019 14:18:05 GMT-0700 (Pacific Daylight Time)
 
 type AggregateChoreInstance {
   count: Int!
@@ -2459,6 +2459,7 @@ type InvitePreviousValues {
 
 enum InviteStatus {
   PENDING
+  UNCONFIRMED_EMAIL
   DENIED
   ACCEPTED
 }

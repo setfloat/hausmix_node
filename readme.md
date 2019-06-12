@@ -35,6 +35,7 @@ Hausmix helps with scheduling chores and incentivising their completion through 
 - date-fns
 - JSONwebtoken
 - nodemailer
+- Amazon Simple Email Service (SES)
 
 ### Future Features
 

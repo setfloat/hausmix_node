@@ -4,6 +4,7 @@ const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const {
   sendInviteEmail,
+  sendNewUserConfirmationEmail,
   preventSendingTooManyEmails,
   checkIfEmailAlreadyInvitedToHousehold
 } = require("./mutations/createInvite");
@@ -115,12 +116,70 @@ const Mutation = {
       info
     );
 
+    const user = await ctx.db.query.user(
+      {
+        where: {
+          id: userId
+        }
+      },
+      `{email}`
+    );
+
+    // create the invite tokens
+    const randomBytesPromisified = promisify(randomBytes);
+    const inviteToken = (await randomBytesPromisified(20)).toString("hex");
+    const inviteTokenExpiry = Date.now() + 1000 * 60 * 60 * 24 * 180; // 6 months
+
+    // create the invite
+    const invite = await ctx.db.mutation.createInvite(
+      {
+        data: {
+          invitedEmail: user.email,
+          invitedIsUser: true,
+          inviteStatus: "UNCONFIRMED_EMAIL",
+          household: { connect: { id: household.id } },
+          invitedBy: { connect: { id: userId } },
+          inviteToken,
+          inviteTokenExpiry
+        }
+      },
+      info
+    );
+
+    // send an email to the user.
+    await sendNewUserConfirmationEmail(user.email, inviteToken);
+    // await sendInviteEmail(user.email, inviteToken);
+
     return household;
   },
 
   async createInvite(parent, args, ctx, info) {
     const { userId } = ctx.request;
     const { householdId, invitedEmail } = args;
+
+    // Ensure user has confirmed email before sending 3rd party email notification.
+
+    const user = await ctx.db.query.user(
+      {
+        where: {
+          id: userId
+        }
+      },
+      `{ id email }`
+    );
+
+    const confirmedUser = await ctx.db.query.invites({
+      where: {
+        invitedEmail: user.email,
+        AND: [{ inviteStatus: "ACCEPTED" }]
+      }
+    });
+    if (!confirmedUser.length) {
+      throw new Error(
+        "You must confirm your account before sending an invitation. Check your email!"
+      );
+    }
+
     const invitedIsUser = await ctx.db.query.user(
       {
         where: { email: invitedEmail }
@@ -170,6 +229,37 @@ const Mutation = {
     return invite;
   },
 
+  async acceptEmailConfirmation(parent, args, ctx, info) {
+    const dbInvite = await ctx.db.query.invites({
+      where: {
+        inviteToken: args.inviteToken,
+        AND: [
+          { inviteTokenExpiry_gt: Date.now() },
+          { inviteStatus: "UNCONFIRMED_EMAIL" }
+        ]
+      }
+    });
+
+    if (!dbInvite.length) {
+      throw new Error("Invalid Token");
+    }
+
+    const updatedInvite = await ctx.db.mutation.updateInvite(
+      {
+        where: {
+          inviteToken: args.inviteToken
+        },
+        data: {
+          inviteStatus: "ACCEPTED",
+          inviteTokenExpiry: Date.now()
+        }
+      },
+      `{ id }`
+    );
+
+    return updatedInvite;
+  },
+
   async acceptInvite(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
 
@@ -178,7 +268,8 @@ const Mutation = {
         inviteToken: args.inviteToken,
         AND: [
           { inviteTokenExpiry_gt: Date.now() },
-          { invitedEmail: args.email }
+          { invitedEmail: args.email },
+          { inviteStatus: "PENDING" }
         ]
       }
     });

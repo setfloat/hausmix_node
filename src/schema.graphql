@@ -39,6 +39,7 @@ type Mutation {
     password: String!
     name: String!
   ): User!
+  acceptEmailConfirmation(inviteToken: String!): Invite!
   createChoreTemplate(
     name: String!
     description: String

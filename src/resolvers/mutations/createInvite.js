@@ -69,7 +69,7 @@ exports.sendInviteEmail = async (invitedEmail, inviteToken) => {
         `You have been invited to join a Hausmix household!
       \n\n
       <a href="${
-        process.env.FRONTEND_URL
+        process.env.FRONTEND_URL_3
       }/join?joinToken=${inviteToken}">Click Here to join</a>
       <h6>This message was sent because a confirmed user of hausmix.com would like you to join their household.</h6>
       <h6>If you do not want this invitation, ignore this email and you will not be contacted again.</h6>
@@ -99,7 +99,7 @@ exports.sendNewUserConfirmationEmail = async (invitedEmail, inviteToken) => {
         In order to use your account, you must confirm your email address by clicking the link below and following the instructions on the confirmation page.
         \n\n
       <a href="${
-        process.env.FRONTEND_URL
+        process.env.FRONTEND_URL_3
       }/confirm?confirmToken=${inviteToken}">Confirm your account</a>
       <h6>This message was sent because your email was used to create an account on hausmix.com</h6>
       <h6>If you did not create this account, ignore this email and you will not be contacted again.</h6>

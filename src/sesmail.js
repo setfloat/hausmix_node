@@ -13,10 +13,10 @@ exports.buildFormattedEmail = text => `
         line-height: 2;
         font-size: 22px;
     ">
-        <h2>Welcome to Chorefront!</h2>
+        <h2>Welcome to Hausmix!</h2>
         <p>${text}</p>
 
-        <p>Thanks!</p>
+        <h4>-Hausmix</h4>
     </div>
 `;
 

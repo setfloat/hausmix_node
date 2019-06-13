@@ -41,7 +41,8 @@ server.start(
         process.env.FRONTEND_URL_2,
         process.env.FRONTEND_URL_3,
         process.env.FRONTEND_URL_4,
-        process.env.FRONTEND_URL_5
+        process.env.FRONTEND_URL_5,
+        process.env.FRONTEND_URL_6
       ]
     }
   },

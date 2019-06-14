@@ -92,7 +92,7 @@ exports.sendNewUserConfirmationEmail = async (invitedEmail, inviteToken) => {
     {
       to: invitedEmail,
       from: process.env.FROM_EMAIL,
-      subject: "Invitation to Hausmix!",
+      subject: "Welcome to Hausmix!",
       message: buildFormattedEmail(
         `Thank you for signing up to Hausmix!
       \n\n

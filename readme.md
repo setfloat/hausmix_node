@@ -38,6 +38,8 @@ View the api endpoint and schema in this interactive playground: https://api.hau
 - JSONwebtoken
 - nodemailer
 - Amazon Simple Email Service (SES)
+- DNS redirects, MX records, and DKIM email keys
+- SSL certificates
 
 ### Future Features
 

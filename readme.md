@@ -2,7 +2,7 @@
 
 Hausmix is a house management software designed for shared housemates and families. This initial implementation is targeted for housemates and shared chores.
 
-Hausmix helps with scheduling chores and incentivising their completion through an innovative monetary reward system. The goal is to alleviate tensions and reduce conflict by having a flexible approach to chore management in shared homes. If your shared home is a mess, maybe it is time to mix in a new approach to how you keep your house tidy.
+Hausmix helps with scheduling chores and incentivizing their completion through an innovative monetary reward system. Hausmix aims to alleviate tensions and reduce household conflict by having a flexible approach to chore management in shared homes. If your shared home is a mess, maybe it is time to mix in a new approach to how you keep your house tidy.
 
 View the api endpoint and schema in this interactive playground: https://api.hausmix.com/
 

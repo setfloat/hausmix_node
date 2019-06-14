@@ -18,7 +18,7 @@ View the api endpoint and schema in this interactive playground: https://api.hau
 - Apollo Client
 - GraphQL
 - Styled Components
-- Mobile & Desktop design
+- Mobile & Desktop responsive
 - date-fns
 - graphql-tag
 - prop-types

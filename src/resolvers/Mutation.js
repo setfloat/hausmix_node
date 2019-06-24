@@ -100,6 +100,28 @@ const Mutation = {
     return user;
   },
 
+  async updateUser(parent, args, ctx, info) {
+    const { userId } = ctx.request;
+
+    if (args.name && args.name.length < 2) {
+      throw new Error("Invalid Name");
+    }
+
+    const user = await ctx.db.mutation.updateUser(
+      {
+        where: {
+          id: userId
+        },
+        data: {
+          ...args
+        }
+      },
+      info
+    );
+
+    return user;
+  },
+
   async createHousehold(parent, args, ctx, info) {
     const { userId } = ctx.request;
     const household = await ctx.db.mutation.createHousehold(
@@ -151,6 +173,39 @@ const Mutation = {
     // await sendInviteEmail(user.email, inviteToken);
 
     return household;
+  },
+
+  async renameHousehold(parent, args, ctx, info) {
+    const { userId } = ctx.request;
+    const { householdId, name } = args;
+
+    const householdToUpdate = await ctx.db.query.households({
+      where: {
+        id: householdId,
+        AND: [
+          {
+            headsOfHouse_some: { id: userId }
+          }
+        ]
+      }
+    });
+
+    if (householdToUpdate && householdToUpdate.length) {
+      const updatedHousehold = await ctx.db.mutation.updateHousehold(
+        {
+          where: {
+            id: householdId
+          },
+          data: {
+            name
+          }
+        },
+        info
+      );
+      return updatedHousehold;
+    } else {
+      throw new Error("No Household Found");
+    }
   },
 
   async createInvite(parent, args, ctx, info) {

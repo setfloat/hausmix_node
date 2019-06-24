@@ -31,7 +31,9 @@ type Mutation {
   signIn(email: String!, password: String!): User!
   signOut: SuccessMessage
   signUp(email: String!, password: String!, name: String!): User!
+  updateUser(name: String): User!
   createHousehold(name: String!): Household!
+  renameHousehold(name: String!, householdId: String!): Household!
   createInvite(householdId: String!, invitedEmail: String!): Invite
   acceptInvite(
     inviteToken: String!
